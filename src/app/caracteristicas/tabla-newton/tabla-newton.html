@@ -1,0 +1,11 @@
+<div class="tabla-contenedor"><table>
+  <thead><tr><th>n</th><th>xₙ</th><th>f(xₙ)</th><th>f'(xₙ)</th><th>xₙ₊₁</th><th>Error absoluto</th><th>Error relativo</th><th>Error %</th><th>Residuo</th></tr></thead>
+  <tbody>
+    @for (iteracion of iteraciones(); track iteracion.numero; let indice = $index; let ultima = $last) {
+      <tr tabindex="0" (click)="seleccionar.emit(indice)" (keydown.enter)="seleccionar.emit(indice)" [class.activa]="indice === indiceActivo()" [class.ultima]="ultima">
+        <td>{{ iteracion.numero }}</td><td>{{ iteracion.xActual | numero }}</td><td>{{ iteracion.valorFuncion | numero }}</td><td>{{ iteracion.valorDerivada | numero }}</td><td>{{ iteracion.siguienteX | numero }}</td><td>{{ iteracion.errorAbsoluto | numero }}</td><td>{{ iteracion.errorRelativo | numero }}</td><td>{{ iteracion.errorPorcentual | numero }}</td><td>{{ iteracion.residuo | numero }}</td>
+      </tr>
+    }
+  </tbody>
+</table></div>
+

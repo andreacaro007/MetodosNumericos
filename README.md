@@ -1,12 +1,13 @@
 # Métodos Numéricos
 
-Aplicación de escritorio educativa para estudiar métodos numéricos de forma visual, verificable y completamente offline. GOAL-001 implementa el **Método de Bisección** de extremo a extremo: entrada científica, validación, solución, errores, tabla, explicación determinista y gráfica interactiva.
+Aplicación de escritorio educativa para estudiar métodos numéricos de forma visual, verificable y completamente offline. Incluye **Bisección** y **Newton-Raphson** de extremo a extremo: entrada científica, validación, solución, errores, tablas, explicación determinista y gráficas interactivas.
 
 ## Características
 
 - Expresiones polinómicas y científicas mediante una capa segura sobre math.js.
 - Sintaxis amigable: `2x`, `3(x+1)`, `ln(x)`, `π`, trigonometría y exponenciales.
-- Bisección implementada en TypeScript sin solucionadores externos.
+- Bisección y Newton-Raphson implementados en TypeScript sin solucionadores externos.
+- Derivación simbólica automática con math.js y tangente sincronizada por iteración.
 - Criterios de parada por raíz exacta, residuo, error absoluto y máximo de iteraciones.
 - Vista matemática con KaTeX y gráfica interactiva con JSXGraph.
 - Tabla completa, selección de iteración, navegación y reproducción automática.
@@ -65,8 +66,10 @@ La solución se calcula una sola vez. Resumen, gráfica, tabla y pasos consumen 
 ## Hoja de ruta
 
 1. GOAL-001 — Fundación, Electron y Bisección.
-2. GOAL-002 — Newton-Raphson, derivación simbólica y tangentes.
+2. GOAL-002 — Newton-Raphson, derivación simbólica y tangentes. **Implementado**.
 3. GOAL-003 — Punto Fijo.
 4. GOAL-004 — Motor científico avanzado.
 
 No se utiliza IA para calcular raíces ni para redactar el procedimiento matemático.
+
+La interfaz inicia sin ejercicio precargado, ofrece ejemplos voluntarios y usa paneles con desplazamiento independiente en escritorio. La ventana es adaptable desde 390 px y prioriza 1366×768 y 1280×720.

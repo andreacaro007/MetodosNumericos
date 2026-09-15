@@ -34,3 +34,21 @@ devolver estado MAXIMO_ITERACIONES
 ```
 
 Los errores de sintaxis, símbolos, dominio, valores no finitos y parámetros se convierten en mensajes en español. `ConstructorPasosBiseccion` reconstruye fórmula, sustitución, evaluación, decisión, error y convergencia sin recalcular ni hardcodear resultados.
+
+## Newton-Raphson
+
+    analizar f y calcular f' con math.js
+    x_actual = x0
+    para n = 1 ... máximo_iteraciones:
+        evaluar f(x_actual) y f'(x_actual)
+        si el residuo cumple: guardar y detener
+        si la derivada es cero o casi cero: guardar y detener
+        siguiente_x = x_actual - f(x_actual) / f'(x_actual)
+        validar finitud y dominio de siguiente_x
+        calcular errores y residuo
+        guardar todos los valores de la iteración
+        si cumple criterio o muestra divergencia: detener
+        x_actual = siguiente_x
+    devolver máximo de iteraciones
+
+SolucionadorNewton implementa el algoritmo; math.js únicamente analiza, deriva, simplifica y evalúa. ConstructorPasosNewton transforma los datos guardados en fórmulas, sustituciones, resultados y explicaciones deterministas.

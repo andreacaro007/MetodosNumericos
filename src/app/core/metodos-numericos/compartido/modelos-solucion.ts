@@ -1,6 +1,21 @@
 export type MetodoNumerico = 'BISECCION' | 'NEWTON_RAPHSON' | 'PUNTO_FIJO';
-export type EstadoConvergencia = 'CONVERGENCIA_ALCANZADA' | 'RAIZ_EXACTA' | 'MAXIMO_ITERACIONES';
-export type RazonParada = 'RAIZ_EXACTA' | 'ERROR_ABSOLUTO' | 'RESIDUO' | 'MAXIMO_ITERACIONES';
+export type EstadoConvergencia =
+  | 'CONVERGENCIA_ALCANZADA'
+  | 'RAIZ_EXACTA'
+  | 'MAXIMO_ITERACIONES'
+  | 'DERIVADA_CERO'
+  | 'DERIVADA_CASI_CERO'
+  | 'VALOR_NO_FINITO'
+  | 'POSIBLE_DIVERGENCIA';
+export type RazonParada =
+  | 'RAIZ_EXACTA'
+  | 'ERROR_ABSOLUTO'
+  | 'RESIDUO'
+  | 'MAXIMO_ITERACIONES'
+  | 'DERIVADA_CERO'
+  | 'DERIVADA_CASI_CERO'
+  | 'VALOR_NO_FINITO'
+  | 'POSIBLE_DIVERGENCIA';
 
 export interface ResultadoMetodoNumerico<TIteracion> {
   metodo: MetodoNumerico;

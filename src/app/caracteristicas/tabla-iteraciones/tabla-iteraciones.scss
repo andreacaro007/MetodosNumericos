@@ -1,4 +1,4 @@
-.tabla-contenedor { max-height: 29rem; overflow: auto; border: 1px solid var(--borde); background: white; }
+.tabla-contenedor { max-width: 100%; max-height: min(29rem, 58dvh); overflow: auto; border: 1px solid var(--borde); background: white; overscroll-behavior: contain; }
 table { width: 100%; min-width: 1050px; border-collapse: collapse; font: 540 .72rem var(--fuente-mono); font-variant-numeric: tabular-nums; }
 th { position: sticky; top: 0; z-index: 1; background: #17211e; color: #f4f0e5; padding: .72rem .8rem; text-align: right; font: 700 .62rem var(--fuente); letter-spacing: .06em; text-transform: uppercase; }
 th:first-child, td:first-child { text-align: center; }

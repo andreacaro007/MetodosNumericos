@@ -4,7 +4,7 @@ import { ErrorExpresionMatematica, type ExpresionAnalizada } from './modelos-mat
 const FUNCIONES_PERMITIDAS = new Set([
   'sin', 'cos', 'tan', 'asin', 'acos', 'atan',
   'sinh', 'cosh', 'tanh', 'sqrt', 'abs', 'exp',
-  'log', 'floor', 'ceil',
+  'log', 'floor', 'ceil', 'sec', 'csc', 'cot',
 ]);
 
 const SIMBOLOS_PERMITIDOS = new Set(['x', 'e', 'pi']);

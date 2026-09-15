@@ -26,3 +26,15 @@ La primera iteración no tiene error de aproximación. Si `xₙ=0`, se omiten re
 ## Convergencia, ventajas y limitaciones
 
 La Bisección converge linealmente y reduce el ancho a la mitad por iteración. Es robusta, determinista y no requiere derivadas. Requiere cambio de signo, puede ser lenta, no detecta raíces pares mediante signos y una discontinuidad puede imitar un cambio de signo.
+
+# Modelo matemático — Newton-Raphson
+
+Para resolver f(x)=0 desde una aproximación x₀ se aplica:
+
+$$x_{n+1}=x_n-\frac{f(x_n)}{f'(x_n)}$$
+
+Geométricamente, xₙ₊₁ es la intersección con el eje X de la recta tangente y=f(xₙ)+f'(xₙ)(x-xₙ). El método requiere una función derivable en la zona recorrida, un x₀ evaluable y derivadas no nulas. Su convergencia es local y puede fallar o divergir cuando x₀ es inadecuado.
+
+Se calculan el error absoluto |xₙ₊₁-xₙ|, el error relativo respecto de |xₙ₊₁|, el porcentaje y el residuo |f(xₙ₊₁)|. Se detiene por raíz exacta, residuo, error absoluto, máximo de iteraciones, derivada cero, derivada casi cero, valor no finito o posible divergencia.
+
+Newton suele converger rápidamente cerca de una raíz simple, pero no garantiza convergencia global. El umbral de derivada casi cero es √Number.EPSILON, escala ligada a la resolución de doble precisión y usada para evitar divisiones numéricamente inestables.

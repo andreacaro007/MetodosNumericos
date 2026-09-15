@@ -7,6 +7,10 @@
 - **RF-003:** configurar extremos, tolerancia y máximo de iteraciones.
 - **RF-004:** validar parámetros, evaluabilidad y cambio de signo.
 - **RF-005:** resolver ecuaciones mediante Bisección.
+- **RF-006:** resolver ecuaciones mediante Newton-Raphson con derivada simbólica automática.
+- **RF-007:** sincronizar tabla, paso a paso y tangente con la iteración activa.
+- **RF-008:** iniciar función, extremos y x₀ vacíos; los ejemplos se cargan solo por acción explícita.
+- **RF-009:** mantener navegación usable entre 390 px y resoluciones de escritorio, sin scroll horizontal global.
 - **RF-006:** mostrar raíz, estado, residuo, errores e intervalo final.
 - **RF-007:** conservar todas las iteraciones sin redondeo interno.
 - **RF-008:** seleccionar una iteración en una tabla profesional.
@@ -31,4 +35,4 @@
 - Punto Fijo con análisis de convergencia.
 - Teclado científico ampliado, exportaciones y manual de usuario.
 
-Newton-Raphson, Punto Fijo, backend, usuarios, IA, nube, PDF y Excel están fuera del alcance de GOAL-001.
+GOAL-002 incorpora Newton-Raphson, derivación simbólica, visualización de tangentes y responsive real. Punto Fijo, backend, usuarios, IA, nube, PDF y Excel permanecen fuera del alcance.

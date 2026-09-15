@@ -1,3 +1,5 @@
+import { parse } from 'mathjs';
+
 export class FormateadorExpresiones {
   numero(valor: number, cifras = 10): string {
     if (!Number.isFinite(valor)) return 'no definido';
@@ -9,5 +11,10 @@ export class FormateadorExpresiones {
 
   numeroLatex(valor: number, cifras = 10): string {
     return this.numero(valor, cifras).replace(/e([+-]?\d+)/, '\\times 10^{$1}');
+  }
+
+  sustituirVariableLatex(expresionNormalizada: string, valor: number): string {
+    const numero = this.numero(valor, 15);
+    return parse(expresionNormalizada.replace(/\bx\b/g, '(' + numero + ')')).toTex({ parenthesis: 'keep', implicit: 'hide' });
   }
 }

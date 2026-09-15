@@ -3,10 +3,10 @@ const path = require('node:path');
 
 function crearVentana() {
   const ventana = new BrowserWindow({
-    width: 1440,
-    height: 920,
-    minWidth: 860,
-    minHeight: 640,
+    width: 1400,
+    height: 900,
+    minWidth: 390,
+    minHeight: 560,
     title: 'Métodos Numéricos',
     backgroundColor: '#f7f6f0',
     autoHideMenuBar: true,

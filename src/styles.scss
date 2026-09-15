@@ -19,7 +19,7 @@
   font-synthesis: none;
 }
 
-html, body { margin: 0; min-height: 100%; background: var(--papel); }
+html, body { margin: 0; min-height: 100%; background: var(--papel); overflow-x: hidden; }
 button, input, textarea { font: inherit; }
 button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--lima-oscuro); outline-offset: 2px; }
 ::selection { background: var(--lima); color: var(--tinta); }

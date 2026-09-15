@@ -1,46 +1,53 @@
 <form class="panel-configuracion" [formGroup]="formulario" (ngSubmit)="enviar()">
   <div class="panel-cabecera">
     <span class="eyebrow">Configuración</span>
-    <span class="metodo-activo">01 · Bisección</span>
+    <span class="metodo-activo">{{ metodo() === 'BISECCION' ? '01 · Bisección' : '02 · Newton-Raphson' }}</span>
   </div>
 
   <section class="entrada-matematica">
     <label for="expresion">Función <span>f(x)</span></label>
-    <textarea id="expresion" rows="2" formControlName="expresion" spellcheck="false" autocomplete="off"></textarea>
+    <textarea #campoExpresion id="expresion" rows="2" formControlName="expresion" placeholder="Escribe f(x)" spellcheck="false" autocomplete="off"></textarea>
     <div class="vista-matematica" aria-live="polite">
       <span>Vista matemática</span>
-      @if (latex(); as formula) {
-        <app-visualizador-matematico [latex]="'f(x)=' + formula" [modoBloque]="true" />
-      } @else {
+      @if (vista(); as formulas) {
+        <app-visualizador-matematico [latex]="'f(x)=' + formulas.funcion" [modoBloque]="true" />
+        @if (formulas.derivada) { <app-visualizador-matematico [latex]="&quot;f'(x)=&quot; + formulas.derivada" [modoBloque]="true" /> }
+      } @else if (expresionActual().trim()) {
         <p class="sintaxis-error">La expresión aún no tiene una sintaxis válida.</p>
+      } @else {
+        <p class="vista-vacia">La función aparecerá aquí.</p>
       }
     </div>
     <div class="teclado" aria-label="Funciones rápidas">
-      @for (tecla of teclas; track tecla) {
-        <button type="button" (click)="insertar(tecla)">{{ tecla }}</button>
+      @for (tecla of teclas; track tecla.etiqueta) {
+        <button type="button" (click)="insertar(tecla.texto, tecla.retroceso)">{{ tecla.etiqueta }}</button>
       }
     </div>
   </section>
 
   <section class="metodos" aria-label="Método numérico">
-    <button type="button" class="metodo seleccionado"><span></span>Bisección <small>Activo</small></button>
-    <button type="button" class="metodo" disabled><span></span>Newton-Raphson <small>Próximamente</small></button>
+    <button type="button" class="metodo" [class.seleccionado]="metodo() === 'BISECCION'" (click)="seleccionar('BISECCION')"><span></span>Bisección <small>Disponible</small></button>
+    <button type="button" class="metodo" [class.seleccionado]="metodo() === 'NEWTON_RAPHSON'" (click)="seleccionar('NEWTON_RAPHSON')"><span></span>Newton-Raphson <small>Disponible</small></button>
     <button type="button" class="metodo" disabled><span></span>Punto Fijo <small>Próximamente</small></button>
   </section>
 
   <div class="parametros">
-    <label>Extremo izquierdo <span>a</span><input type="number" formControlName="extremoIzquierdo" /></label>
-    <label>Extremo derecho <span>b</span><input type="number" formControlName="extremoDerecho" /></label>
+    @if (metodo() === 'BISECCION') {
+      <label>Extremo izquierdo <span>a</span><input type="number" formControlName="extremoIzquierdo" placeholder="a" /></label>
+      <label>Extremo derecho <span>b</span><input type="number" formControlName="extremoDerecho" placeholder="b" /></label>
+    } @else {
+      <label class="ancho">Valor inicial <span>x₀</span><input type="number" formControlName="valorInicial" placeholder="x₀" /></label>
+    }
     <label class="ancho">Tolerancia <span>ε</span><input type="number" formControlName="tolerancia" step="any" /></label>
     <label class="ancho">Máximo de iteraciones <input type="number" formControlName="maximoIteraciones" /></label>
   </div>
 
-  <button class="resolver" type="submit"><span>Resolver ecuación</span><b>→</b></button>
+  <button class="resolver" type="submit"><span>Resolver con {{ metodo() === 'BISECCION' ? 'Bisección' : 'Newton' }}</span><b>→</b></button>
 
   <section class="ejemplos">
     <p>Ejemplos precargados</p>
-    @for (ejemplo of ejemplos; track ejemplo.nombre) {
-      <button type="button" (click)="cargar(ejemplo)"><span>{{ ejemplo.tipo }}</span><strong>{{ ejemplo.nombre }}</strong><b>[{{ ejemplo.a }}, {{ ejemplo.b }}]</b></button>
+    @for (ejemplo of ejemplosActivos(); track ejemplo.tipo) {
+      <button type="button" (click)="cargar(ejemplo)"><span>{{ ejemplo.tipo }}</span><strong>{{ ejemplo.nombre }}</strong><b>@if (ejemplo.metodo === 'BISECCION') {[{{ ejemplo.a }}, {{ ejemplo.b }}]} @else {x₀={{ ejemplo.x0 }}}</b></button>
     }
   </section>
 </form>
