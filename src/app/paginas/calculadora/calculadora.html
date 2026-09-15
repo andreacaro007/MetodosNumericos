@@ -20,6 +20,7 @@
       (resolver)="resolver($event)"
       (cambioMetodo)="cambiarMetodo($event)"
       (cambioExpresion)="actualizarExpresion($event)"
+      (cambioConfiguracion)="actualizarConfiguracionComparacion($event)"
     />
   </aside>
 
@@ -27,8 +28,8 @@
     <header class="cabecera-analisis">
       <div>
         <span class="eyebrow">Área de trabajo</span>
-        <h1>{{ pestana() === 'analisis' ? 'Análisis Científico de Funciones' : configuracion().titulo }}</h1>
-        <p>{{ pestana() === 'analisis' ? 'Inspección simbólica, derivadas, evaluación puntual y exploración de intervalos.' : configuracion().descripcion }}</p>
+        <h1>{{ pestana() === 'analisis' ? 'Análisis científico de funciones' : pestana() === 'comparacion' ? 'Comparación de métodos' : configuracion().titulo }}</h1>
+        <p>{{ pestana() === 'analisis' ? 'Inspección simbólica, derivadas, evaluación puntual y exploración de intervalos.' : pestana() === 'comparacion' ? 'Contrasta estado, aproximación, iteraciones, errores y residuos con los parámetros suministrados.' : configuracion().descripcion }}</p>
       </div>
 
       @if (resultadoBiseccion(); as solucion) {
@@ -118,16 +119,25 @@
           }
         }
 
+        @case ('comparacion') {
+          <app-panel-comparacion [configuracion]="configuracionComparacion()" />
+        }
+
         @case ('resumen') {
           @if (resultado(); as solucion) {
             <app-resumen-resultado [resultado]="solucion" />
+            <div class="acciones-exportacion">
+              <button type="button" class="btn-exportar-resultado" (click)="exportarResultado()">
+                Exportar resultado (.md)
+              </button>
+            </div>
           } @else if (!error()) {
             <section class="estado-inicial">
               <span class="numero-grande">{{ configuracion().simbolo }}</span>
               <div>
                 <span class="eyebrow">Listo para calcular</span>
                 <h2>{{ configuracion().titulo }}</h2>
-                <p>{{ configuracion().instruccion }} Pulsa "Resolver" para ejecutar el método numérico o explora la función en la pestaña de Análisis Científico.</p>
+                <p>{{ configuracion().instruccion }} Pulsa "Resolver" para ejecutar el método numérico o explora la función en la pestaña de Análisis científico.</p>
                 <button type="button" class="btn-ir-analisis" (click)="pestana.set('analisis')">
                   🔬 Explorar y analizar función antes de resolver
                 </button>

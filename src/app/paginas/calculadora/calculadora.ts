@@ -23,17 +23,23 @@ import { GraficaBiseccion } from '../../caracteristicas/grafica/grafica-biseccio
 import { GraficaNewton } from '../../caracteristicas/grafica/grafica-newton';
 import { GraficaPuntoFijo } from '../../caracteristicas/grafica/grafica-punto-fijo';
 import { PanelAnalisis } from '../../caracteristicas/panel-analisis/panel-analisis';
+import { PanelComparacion } from '../../caracteristicas/panel-comparacion/panel-comparacion';
 import { VisualizadorMatematico } from '../../compartido/visualizador-matematico';
 import { FormatearNumeroPipe } from '../../compartido/formatear-numero.pipe';
 import { CasoUsoResolverBiseccion } from '../../aplicacion/caso-uso-resolver-biseccion';
 import { CasoUsoResolverNewton } from '../../aplicacion/caso-uso-resolver-newton';
 import { CasoUsoResolverPuntoFijo } from '../../aplicacion/caso-uso-resolver-punto-fijo';
+import { GeneradorReporteMarkdown } from '../../aplicacion/generador-reporte-markdown';
+import { descargarMarkdown } from '../../compartido/descargar-markdown';
+import type {
+  ConfiguracionComparacion,
+  ResultadoAplicacion,
+} from '../../core/comparacion/modelos-comparacion';
 import type { ResultadoBiseccion } from '../../core/metodos-numericos/biseccion/modelos-biseccion';
 import type { ResultadoNewton } from '../../core/metodos-numericos/newton/modelos-newton';
 import type { ResultadoPuntoFijo } from '../../core/metodos-numericos/punto-fijo/modelos-punto-fijo';
 
-export type Pestana = 'resumen' | 'grafica' | 'iteraciones' | 'pasos' | 'analisis';
-type ResultadoAplicacion = ResultadoBiseccion | ResultadoNewton | ResultadoPuntoFijo;
+export type Pestana = 'resumen' | 'grafica' | 'iteraciones' | 'pasos' | 'analisis' | 'comparacion';
 
 const CONFIGURACION_METODO: Record<
   MetodoDisponible,
@@ -74,6 +80,7 @@ const CONFIGURACION_METODO: Record<
     GraficaNewton,
     GraficaPuntoFijo,
     PanelAnalisis,
+    PanelComparacion,
     VisualizadorMatematico,
     FormatearNumeroPipe,
   ],
@@ -87,11 +94,21 @@ export class Calculadora implements OnDestroy {
   private readonly casoBiseccion = new CasoUsoResolverBiseccion();
   private readonly casoNewton = new CasoUsoResolverNewton();
   private readonly casoPuntoFijo = new CasoUsoResolverPuntoFijo();
+  private readonly generadorReporte = new GeneradorReporteMarkdown();
 
   readonly metodo = signal<MetodoDisponible>('BISECCION');
   readonly configuracion = computed(() => CONFIGURACION_METODO[this.metodo()]);
 
   readonly expresionActual = signal<string>('');
+  readonly configuracionComparacion = signal<ConfiguracionComparacion>({
+    expresion: '',
+    expresionIteracion: '',
+    extremoIzquierdo: null,
+    extremoDerecho: null,
+    valorInicial: null,
+    tolerancia: 0.000001,
+    maximoIteraciones: 100,
+  });
   readonly resultado = signal<ResultadoAplicacion | undefined>(undefined);
 
   readonly resultadoBiseccion = computed<ResultadoBiseccion | undefined>(() => {
@@ -131,6 +148,7 @@ export class Calculadora implements OnDestroy {
     { id: 'iteraciones', nombre: 'Iteraciones' },
     { id: 'pasos', nombre: 'Paso a paso' },
     { id: 'analisis', nombre: 'Análisis científico' },
+    { id: 'comparacion', nombre: 'Comparación' },
   ];
 
   @HostListener('window:keydown', ['$event'])
@@ -177,6 +195,19 @@ export class Calculadora implements OnDestroy {
 
   actualizarExpresion(expresion: string): void {
     this.expresionActual.set(expresion);
+  }
+
+  actualizarConfiguracionComparacion(configuracion: ConfiguracionComparacion): void {
+    this.configuracionComparacion.set(configuracion);
+  }
+
+  exportarResultado(): void {
+    const resultado = this.resultado();
+    if (!resultado) return;
+    descargarMarkdown(
+      this.generadorReporte.generarResultado(resultado),
+      'resolucion-' + resultado.metodo.toLowerCase() + '.md'
+    );
   }
 
   cargarEnBiseccion(params: { a: number; b: number }): void {

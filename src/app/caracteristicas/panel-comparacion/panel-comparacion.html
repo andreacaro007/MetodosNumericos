@@ -1,0 +1,90 @@
+<section class="introduccion-comparacion">
+  <div>
+    <span class="eyebrow">Comparación académica</span>
+    <h2>Disponibilidad de métodos</h2>
+    <p>Se ejecutarán únicamente los métodos cuyos parámetros hayas proporcionado. La comparación no inventa intervalos, valores iniciales ni transformaciones g(x).</p>
+  </div>
+  <button
+    type="button"
+    class="btn-comparar"
+    [disabled]="!hayMetodoDisponible()"
+    (click)="comparar()"
+  >
+    Comparar métodos
+  </button>
+</section>
+
+<section class="disponibilidad" aria-label="Disponibilidad de métodos para comparar">
+  @for (item of disponibilidades(); track item.metodo) {
+    <article [class.disponible]="item.disponible">
+      <strong>{{ nombreMetodo(item.metodo) }}</strong>
+      <span>{{ item.disponible ? '✓ Disponible' : '— No disponible' }}</span>
+      @if (item.motivo) {
+        <small>{{ item.motivo }}</small>
+      }
+    </article>
+  }
+</section>
+
+@if (resultado(); as comparacion) {
+  <section class="resultado-comparacion">
+    <header>
+      <div>
+        <h2>Resultados cuantitativos</h2>
+        <p>Interpreta estado, error, residuo y razón de parada por separado.</p>
+      </div>
+      <button type="button" class="btn-exportar" (click)="exportar()">
+        Exportar comparación (.md)
+      </button>
+    </header>
+
+    <div class="tabla-contenedor" tabindex="0" aria-label="Tabla comparativa de métodos">
+      <table>
+        <thead>
+          <tr>
+            <th>Método</th>
+            <th>Estado</th>
+            <th>Aproximación</th>
+            <th>Iteraciones</th>
+            <th>Error absoluto</th>
+            <th>Error relativo</th>
+            <th>Residuo</th>
+            <th>Razón de parada</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (metodo of comparacion.metodos; track metodo.metodo) {
+            <tr>
+              <th scope="row">{{ nombreMetodo(metodo.metodo) }}</th>
+              <td>
+                <span class="estado" [class.favorable]="estadoFavorable(metodo.estado)">
+                  {{ estadoVisible(metodo.estado) }}
+                </span>
+              </td>
+              <td>{{ metodo.raiz | numero:12 }}</td>
+              <td>{{ metodo.iteraciones ?? '—' }}</td>
+              <td>{{ metodo.errorAbsolutoFinal | numero:8 }}</td>
+              <td>{{ metodo.errorRelativoFinal | numero:8 }}</td>
+              <td>{{ metodo.residuoFuncion | numero:8 }}</td>
+              <td class="razon">{{ metodo.descripcion }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <section class="observaciones">
+      <h2>Observaciones</h2>
+      <ul>
+        @for (observacion of comparacion.observaciones; track observacion) {
+          <li>{{ observacion }}</li>
+        }
+      </ul>
+    </section>
+  </section>
+} @else {
+  <section class="estado-vacio">
+    <strong>Configura los métodos que deseas evaluar.</strong>
+    <p>Completa sus parámetros en el panel izquierdo y pulsa “Comparar métodos”. Los métodos incompletos aparecerán como no disponibles, no como errores.</p>
+  </section>
+}

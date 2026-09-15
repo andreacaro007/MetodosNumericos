@@ -48,7 +48,11 @@ Punto Fijo cuenta con:
 - `CasoUsoResolverPuntoFijo` como puerto de aplicación.
 - Componentes visuales especializados: `TablaPuntoFijo`, `PasoAPasoPuntoFijo` y `GraficaPuntoFijo` (Cobweb Plot interactivo con curva $y=g(x)$ y recta identidad $y=x$).
 
-El formulario comparte función, tolerancia y máximo de iteraciones; habilita intervalo para Bisección o x₀ para Newton. Cambiar de método limpia resultado, error, reproducción e iteración activa. Las tablas y gráficas son específicas, mientras navegación, resumen y visualización KaTeX se reutilizan.
+El formulario comparte función, tolerancia y máximo de iteraciones; habilita intervalo para Bisección o x₀ para Newton. Cambiar de método conserva los parámetros suministrados y limpia el resultado, el error, la reproducción y la iteración activa. Las tablas y gráficas son específicas, mientras navegación, resumen y visualización KaTeX se reutilizan.
+
+## Comparación entre métodos
+
+`CasoUsoCompararMetodos` reutiliza `CasoUsoResolverBiseccion`, `CasoUsoResolverNewton` y `CasoUsoResolverPuntoFijo`. Ejecuta cada método de forma independiente con los parámetros proporcionados por el usuario, representa los métodos incompletos como no disponibles y entrega resultados normalizados al componente `PanelComparacion`.
 
 El layout usa 100dvh y scroll independiente para configuración y área de trabajo en escritorio; debajo de 780 px se apila. Las gráficas observan cambios de tamaño con ResizeObserver, resizeContainer() y fullUpdate().
 

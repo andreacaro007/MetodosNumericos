@@ -16,6 +16,27 @@ main { height: calc(100dvh - 4.2rem); display: grid; grid-template-columns: clam
   justify-content: space-between;
 }
 
+.acciones-exportacion {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.btn-exportar-resultado {
+  border: 1px solid #2563eb;
+  border-radius: 0.5rem;
+  padding: 0.65rem 1rem;
+  background: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-exportar-resultado:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.4);
+  outline-offset: 2px;
+}
+
 .atajos-ayuda {
   display: flex;
   align-items: center;

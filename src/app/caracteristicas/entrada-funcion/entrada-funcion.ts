@@ -11,6 +11,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import type { ParametrosBiseccion } from '../../core/metodos-numericos/biseccion/modelos-biseccion';
 import type { ParametrosNewton } from '../../core/metodos-numericos/newton/modelos-newton';
 import type { ParametrosPuntoFijo } from '../../core/metodos-numericos/punto-fijo/modelos-punto-fijo';
+import type { ConfiguracionComparacion } from '../../core/comparacion/modelos-comparacion';
 import { CasoUsoResolverBiseccion } from '../../aplicacion/caso-uso-resolver-biseccion';
 import { CasoUsoResolverNewton } from '../../aplicacion/caso-uso-resolver-newton';
 import { CasoUsoResolverPuntoFijo } from '../../aplicacion/caso-uso-resolver-punto-fijo';
@@ -53,6 +54,7 @@ export class EntradaFuncion {
   readonly resolver = output<SolicitudResolucion>();
   readonly cambioMetodo = output<MetodoDisponible>();
   readonly cambioExpresion = output<string>();
+  readonly cambioConfiguracion = output<ConfiguracionComparacion>();
 
   private readonly casoBiseccion = new CasoUsoResolverBiseccion();
   private readonly casoNewton = new CasoUsoResolverNewton();
@@ -171,22 +173,14 @@ export class EntradaFuncion {
     this.formulario.controls.expresionIteracion.valueChanges.subscribe((valor) =>
       this.expresionIteracionActual.set(valor)
     );
+    this.formulario.valueChanges.subscribe(() => this.emitirConfiguracionComparacion());
+    queueMicrotask(() => this.emitirConfiguracionComparacion());
   }
 
   seleccionar(metodo: MetodoDisponible): void {
     if (this.metodo() === metodo) return;
     this.metodo.set(metodo);
-    this.formulario.reset({
-      expresion: '',
-      expresionIteracion: '',
-      extremoIzquierdo: null,
-      extremoDerecho: null,
-      valorInicial: null,
-      tolerancia: 0.000001,
-      maximoIteraciones: 100,
-    });
     this.ajustarCamposPorMetodo(metodo);
-    this.formulario.markAsPristine();
     this.cambioMetodo.emit(metodo);
   }
 
@@ -329,6 +323,19 @@ export class EntradaFuncion {
         },
       });
     }
+  }
+
+  private emitirConfiguracionComparacion(): void {
+    const valores = this.formulario.getRawValue();
+    this.cambioConfiguracion.emit({
+      expresion: valores.expresion,
+      expresionIteracion: valores.expresionIteracion,
+      extremoIzquierdo: valores.extremoIzquierdo,
+      extremoDerecho: valores.extremoDerecho,
+      valorInicial: valores.valorInicial,
+      tolerancia: valores.tolerancia,
+      maximoIteraciones: valores.maximoIteraciones,
+    });
   }
 }
 

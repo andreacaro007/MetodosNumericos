@@ -7,6 +7,7 @@ Aplicación de escritorio educativa para estudiar métodos numéricos y analizar
 - Expresiones polinómicas y científicas mediante una capa segura sobre math.js.
 - Sintaxis amigable: `2x`, `3(x+1)`, `ln(x)`, `π`, trigonometría y exponenciales.
 - Bisección, Newton-Raphson y Punto Fijo implementados en TypeScript sin solucionadores externos.
+- Comparación académica entre los tres métodos, reutilizando únicamente los parámetros suministrados.
 - Derivación simbólica automática con math.js y tangente sincronizada por iteración.
 - Primera y segunda derivada en el panel de análisis científico, renderizadas con KaTeX.
 - Evaluación puntual de `f(x)` con sustitución matemática y resultado numérico.
@@ -60,6 +61,7 @@ El build local queda en `dist/numerical-lab/browser`. El ejecutable portable que
 
 ```text
 Electron → Angular UI ─┬→ Casos de uso → Bisección / Newton / Punto Fijo
+                      ├→ CasoUsoCompararMetodos → solucionadores existentes
                       └→ CasoUsoAnalizarFuncion → motor de análisis científico
                                                    ↓
                          Analizador / Derivador / Evaluador → math.js
@@ -76,6 +78,7 @@ Los solucionadores mantienen sus propios resultados inmutables para resumen, gr�
 - [Arquitectura](docs/arquitectura.md)
 - [Referencias y licencias](docs/referencias.md)
 - [Decisiones técnicas](docs/decisiones-tecnicas.md)
+- [Manual](docs/manual.md)
 
 ## Hoja de ruta
 
@@ -83,7 +86,8 @@ Los solucionadores mantienen sus propios resultados inmutables para resumen, gr�
 2. GOAL-002 — Newton-Raphson, derivación simbólica y tangentes. **Implementado**.
 3. GOAL-003 — Punto Fijo con análisis de convergencia y Cobweb Plot. **Implementado**.
 4. GOAL-004 — Motor científico avanzado. **Implementado**.
-5. GOAL-005 — Integración académica final, comparación, exportaciones y pulido general.
+5. GOAL-005 — Comparación académica entre métodos. **Implementado**.
+6. GOAL-006 — Cierre final del manual y pendientes de integración.
 
 No se utiliza IA para calcular raíces ni para redactar el procedimiento matemático.
 
