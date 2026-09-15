@@ -4,6 +4,9 @@
 /dist
 /.electron-app
 /release
+/python/build
+/python/dist
+/python/*.spec
 /.serena
 /tmp
 /out-tsc

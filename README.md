@@ -89,6 +89,6 @@ Los solucionadores mantienen sus propios resultados inmutables para resumen, gr�
 5. GOAL-005 — Comparación académica entre métodos. **Implementado**.
 6. GOAL-006 — Cierre final del manual y pendientes de integración.
 
-No se utiliza IA para calcular raíces ni para redactar el procedimiento matemático.
+No se utiliza IA para calcular raíces ni para redactar el procedimiento matemático. La aplicación de escritorio incluye un motor Python auxiliar para la cota teórica de Bisección; los solucionadores principales continúan en TypeScript y conservan un fallback local.
 
 La interfaz inicia sin ejercicio precargado, ofrece ejemplos voluntarios y usa paneles con desplazamiento independiente en escritorio. La ventana es adaptable desde 390 px y prioriza 1366×768 y 1280×720.

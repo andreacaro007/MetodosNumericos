@@ -9,7 +9,11 @@ Electron (proceso principal seguro)
                  └── math.js
 ```
 
-Electron solamente crea una ventana y carga el build local. No existe IPC porque el renderer no necesita capacidades del sistema operativo.
+Electron crea la ventana, carga el build local y expone un único canal IPC restringido para el motor numérico auxiliar. El preload no expone Node.js: solo permite solicitar operaciones incluidas en una lista cerrada. El proceso principal ejecuta motor-numerico.exe con entrada y salida JSON, sin servidor, puertos ni acceso general al sistema.
+
+Angular y TypeScript se comunican mediante contextBridge con el canal motor-numerico:ejecutar, que invoca el motor Python empaquetado.
+
+Los solucionadores de Bisección, Newton-Raphson y Punto Fijo permanecen en TypeScript. Python calcula la cota teórica de Bisección en la aplicación empaquetada; la implementación TypeScript se conserva como respaldo para pruebas, navegador o fallos del proceso auxiliar.
 
 La entrada se convierte en `ExpresionAnalizada`, que conserva texto original, normalización, AST y LaTeX. El solucionador compila una vez y produce un `ResultadoBiseccion` consumido por resumen, tabla, pasos y gráfica. `Calculadora` sincroniza la iteración activa mediante señales.
 
@@ -19,6 +23,7 @@ La entrada se convierte en `ExpresionAnalizada`, que conserva texto original, no
 - El AST solo admite constantes, `x`, operadores y una lista científica controlada.
 - Electron usa `contextIsolation: true`, `nodeIntegration: false` y `sandbox: true`.
 - Se bloquean ventanas nuevas; fuentes, KaTeX, math.js y JSXGraph son locales.
+- El IPC acepta únicamente operaciones numéricas declaradas y el proceso Python se ejecuta oculto, con tiempo máximo de respuesta.
 
 ## Arquitectura multi-método
 

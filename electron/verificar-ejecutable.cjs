@@ -93,8 +93,8 @@ async function ejecutar() {
   await esperar(200);
   const raizParcial = await esperarValor(cdp, '.raiz > strong');
   validarCercania(raizParcial, 0.166166, 0.000002);
-  const respuestaParcial = await cdp.evaluar('({ titulo: document.body.textContent.includes(\'Respuesta académica\'), cambioSigno: document.body.textContent.includes(\'Existe un cambio de signo\'), cota: document.querySelector(\'.resultado-cota\')?.textContent?.includes(\'N = 24\'), filas: document.querySelectorAll(\'.respuesta-academica table tr\').length, contenido: document.querySelector(\'.respuesta-academica\')?.textContent })');
-  if (!respuestaParcial.titulo || !respuestaParcial.cambioSigno || !respuestaParcial.cota || respuestaParcial.filas < 5 || !respuestaParcial.contenido?.includes('0.1875')) {
+  const respuestaParcial = await cdp.evaluar('({ titulo: document.body.textContent.includes(\'Respuesta académica\'), cambioSigno: document.body.textContent.includes(\'Existe un cambio de signo\'), cota: document.querySelector(\'.resultado-cota\')?.textContent?.includes(\'N = 24\'), motor: document.querySelector(\'.motor-python\')?.textContent?.includes(\'Python integrado\'), filas: document.querySelectorAll(\'.respuesta-academica table tr\').length, contenido: document.querySelector(\'.respuesta-academica\')?.textContent })');
+  if (!respuestaParcial.titulo || !respuestaParcial.cambioSigno || !respuestaParcial.cota || !respuestaParcial.motor || respuestaParcial.filas < 5 || !respuestaParcial.contenido?.includes('0.1875')) {
     throw new Error('La respuesta académica del ejercicio real no coincide con la aceptación: ' + JSON.stringify(respuestaParcial));
   }
 

@@ -1,3 +1,7 @@
-'use strict';
+"use strict";
 
-// Precarga intencionalmente vacía: el renderer no necesita acceso a Node.js ni IPC.
+const { contextBridge, ipcRenderer } = require("electron");
+
+contextBridge.exposeInMainWorld("motorNumerico", Object.freeze({
+  ejecutar: (solicitud) => ipcRenderer.sendSync("motor-numerico:ejecutar", solicitud),
+}));

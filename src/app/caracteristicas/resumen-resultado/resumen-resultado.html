@@ -47,6 +47,7 @@
             <p>Sustitución: <strong>{{ cota.sustitucion }}</strong></p>
             <p>Resultado intermedio: N = ceil({{ cota.valorLogaritmo | numero:6 }})</p>
             <p class='resultado-cota'>N = {{ cota.iteraciones }}</p>
+            <p class='nota motor-python'>Motor usado: {{ cota.motor === 'python' ? 'Python integrado' : 'TypeScript (respaldo)' }}</p>
             <p class='nota'>La cota teórica asociada a la reducción del intervalo es N = {{ cota.iteraciones }}. En esta ejecución el método realizó {{ respuesta.resultado.cantidadIteraciones }} iteraciones y pudo detenerse por otro criterio.</p>
           </div>
         }

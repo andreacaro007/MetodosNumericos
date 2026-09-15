@@ -26,7 +26,9 @@ La aplicación apoya el análisis del estudiante, pero no reemplaza la verificac
 5. Pulsa **Ejecutar de todas formas** únicamente si verificaste el origen del archivo. Este aviso puede aparecer porque el ejecutable académico no tiene una firma digital comercial; no significa por sí solo que el archivo contenga un problema.
 6. Espera a que aparezca la ventana **Métodos Numéricos**.
 
-El ejecutable es portable: no requiere instalación, Node.js ni permisos de administrador. Puede copiarse a otra carpeta o memoria USB. Los reportes exportados se guardan en la ubicación que gestione el navegador interno de Electron, normalmente **Descargas**.
+El ejecutable es portable: no requiere instalación, Node.js, Python ni permisos de administrador. Incluye un motor Python empaquetado que se ejecuta internamente y sin abrir una terminal. Puede copiarse a otra carpeta o memoria USB. Los reportes exportados se guardan en la ubicación que gestione el navegador interno de Electron, normalmente **Descargas**.
+
+En la Respuesta académica de Bisección, la cota teórica indica **Motor usado: Python integrado** cuando el cálculo proviene del componente Python incluido. Si el motor no estuviera disponible, la aplicación usa automáticamente el respaldo TypeScript y lo identifica como tal.
 
 ## 4. Interfaz principal
 

@@ -16,6 +16,7 @@ export interface CotaIteracionesBiseccion {
   sustitucion: string;
   valorLogaritmo: number;
   iteraciones: number;
+  motor: 'python' | 'typescript';
 }
 
 export interface RespuestaAcademicaBiseccion {

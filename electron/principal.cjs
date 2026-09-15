@@ -1,5 +1,39 @@
-const { app, BrowserWindow } = require('electron');
-const path = require('node:path');
+const { app, BrowserWindow, ipcMain } = require("electron");
+const { spawnSync } = require("node:child_process");
+const path = require("node:path");
+
+const OPERACIONES_PERMITIDAS = new Set(["iteraciones_biseccion"]);
+
+function rutaMotorNumerico() {
+  return app.isPackaged
+    ? path.join(process.resourcesPath, "motor-numerico.exe")
+    : path.join(__dirname, "..", "python", "dist", "motor-numerico.exe");
+}
+
+ipcMain.on("motor-numerico:ejecutar", (evento, solicitud) => {
+  if (!solicitud || typeof solicitud !== "object" || !OPERACIONES_PERMITIDAS.has(solicitud.operacion)) {
+    evento.returnValue = { ok: false, motor: "python", error: "Operación no permitida." };
+    return;
+  }
+
+  const proceso = spawnSync(rutaMotorNumerico(), [], {
+    input: JSON.stringify(solicitud),
+    encoding: "utf8",
+    timeout: 5000,
+    windowsHide: true,
+  });
+
+  if (proceso.error || proceso.status !== 0) {
+    evento.returnValue = { ok: false, motor: "python", error: "El motor numérico no respondió." };
+    return;
+  }
+
+  try {
+    evento.returnValue = JSON.parse(proceso.stdout);
+  } catch {
+    evento.returnValue = { ok: false, motor: "python", error: "Respuesta inválida del motor numérico." };
+  }
+});
 
 function crearVentana() {
   const ventana = new BrowserWindow({

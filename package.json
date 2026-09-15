@@ -14,8 +14,9 @@
     "test": "ng test --watch=false",
     "probar": "ng test --watch=false",
     "escritorio": "npm run compilar && electron .",
+    "compilar:python": "node electron/preparar-python.cjs",
     "preparar:electron": "node electron/preparar-empaquetado.cjs",
-    "ejecutable": "npm run compilar && npm run preparar:electron && electron-builder --projectDir .electron-app --win portable",
+    "ejecutable": "npm run compilar && npm run compilar:python && npm run preparar:electron && electron-builder --projectDir .electron-app --win portable",
     "verificar:ejecutable": "node electron/verificar-ejecutable.cjs"
   },
   "private": true,
