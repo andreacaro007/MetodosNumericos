@@ -1,0 +1,9 @@
+.tabla-contenedor { max-height: 29rem; overflow: auto; border: 1px solid var(--borde); background: white; }
+table { width: 100%; min-width: 1050px; border-collapse: collapse; font: 540 .72rem var(--fuente-mono); font-variant-numeric: tabular-nums; }
+th { position: sticky; top: 0; z-index: 1; background: #17211e; color: #f4f0e5; padding: .72rem .8rem; text-align: right; font: 700 .62rem var(--fuente); letter-spacing: .06em; text-transform: uppercase; }
+th:first-child, td:first-child { text-align: center; }
+td { padding: .65rem .8rem; text-align: right; border-bottom: 1px solid #e8e6df; white-space: nowrap; }
+tbody tr { cursor: pointer; outline: none; transition: background 120ms; }
+tbody tr:hover, tbody tr:focus { background: #f1f4e9; }
+tbody tr.activa { background: #eaff9d; box-shadow: inset 3px 0 var(--tinta); }
+tbody tr.ultima:not(.activa) { background: #f5f1e6; font-weight: 720; }

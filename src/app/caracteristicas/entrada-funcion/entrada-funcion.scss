@@ -1,0 +1,38 @@
+:host { display: block; min-width: 0; }
+.panel-configuracion { background: var(--tinta); color: #f8f4e8; min-height: 100%; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; }
+.panel-cabecera { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ffffff24; padding-bottom: .9rem; }
+.eyebrow { color: var(--lima); font-weight: 750; letter-spacing: .16em; text-transform: uppercase; font-size: .72rem; }
+.metodo-activo { font: 650 .76rem var(--fuente-mono); color: #bbc4bf; }
+label { display: block; font-size: .78rem; font-weight: 700; letter-spacing: .02em; }
+label > span { color: var(--lima); font-family: var(--fuente-mono); }
+textarea, input { box-sizing: border-box; width: 100%; border: 1px solid #ffffff2b; background: #101715; color: white; border-radius: .35rem; font: 550 .95rem var(--fuente-mono); outline: none; transition: border-color 160ms, box-shadow 160ms; }
+textarea { margin-top: .55rem; padding: .9rem; resize: vertical; min-height: 4.6rem; font-size: 1.05rem; }
+input { padding: .7rem .75rem; margin-top: .4rem; }
+textarea:focus, input:focus { border-color: var(--lima); box-shadow: 0 0 0 3px #d8ff3e1c; }
+.vista-matematica { margin-top: .65rem; min-height: 5.2rem; border: 1px solid #ffffff1c; background: #ffffff08; padding: .65rem .8rem; display: grid; align-content: center; }
+.vista-matematica > span { color: #8e9b95; text-transform: uppercase; letter-spacing: .1em; font-size: .62rem; }
+.vista-matematica app-visualizador-matematico { text-align: center; font-size: 1.05rem; }
+.sintaxis-error { color: #ffb7a8; font-size: .78rem; margin: .65rem 0 .1rem; }
+.teclado { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .55rem; }
+.teclado button { border: 1px solid #ffffff1c; color: #c8d0cc; background: transparent; border-radius: .25rem; font: 650 .72rem var(--fuente-mono); padding: .38rem .5rem; cursor: pointer; }
+.teclado button:hover { color: var(--lima); border-color: #d8ff3e80; }
+.metodos { display: grid; gap: .4rem; }
+.metodo { display: grid; grid-template-columns: auto 1fr auto; gap: .65rem; align-items: center; width: 100%; border: 1px solid transparent; background: transparent; color: #9aa49f; padding: .65rem .7rem; text-align: left; font: 650 .78rem var(--fuente); }
+.metodo > span { width: .55rem; height: .55rem; border: 1px solid currentColor; border-radius: 50%; }
+.metodo small { font-weight: 550; color: #69746f; }
+.metodo.seleccionado { background: #ffffff0d; border-color: #ffffff17; color: white; }
+.metodo.seleccionado > span { background: var(--lima); border-color: var(--lima); box-shadow: 0 0 0 3px #d8ff3e20; }
+.metodo.seleccionado small { color: var(--lima); }
+.parametros { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+.parametros .ancho { grid-column: 1 / -1; }
+.resolver { border: 0; background: var(--lima); color: #101512; min-height: 3.25rem; padding: 0 1rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font: 800 .86rem var(--fuente); text-transform: uppercase; letter-spacing: .07em; transition: transform 150ms, background 150ms; }
+.resolver:hover { background: #e3ff76; transform: translateY(-1px); }
+.resolver b { font-size: 1.4rem; }
+.ejemplos { border-top: 1px solid #ffffff1b; padding-top: .9rem; display: grid; gap: .35rem; }
+.ejemplos > p { color: #8e9b95; text-transform: uppercase; letter-spacing: .12em; font-size: .62rem; }
+.ejemplos button { border: 0; border-left: 2px solid #ffffff1a; background: transparent; color: white; display: grid; grid-template-columns: 1fr auto; gap: .12rem .5rem; text-align: left; padding: .45rem .6rem; cursor: pointer; }
+.ejemplos button:hover { border-left-color: var(--lima); background: #ffffff07; }
+.ejemplos span { grid-column: 1 / -1; color: #6f7c76; font-size: .6rem; text-transform: uppercase; letter-spacing: .08em; }
+.ejemplos strong { font: 650 .77rem var(--fuente-mono); }
+.ejemplos b { color: #98a39e; font: 550 .68rem var(--fuente-mono); }
+@media (max-width: 760px) { .panel-configuracion { padding: 1rem; } }

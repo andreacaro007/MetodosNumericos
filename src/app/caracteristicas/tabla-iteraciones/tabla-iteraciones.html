@@ -1,0 +1,15 @@
+<div class="tabla-contenedor">
+  <table>
+    <thead><tr><th>n</th><th>a</th><th>b</th><th>f(a)</th><th>f(b)</th><th>xₘ</th><th>f(xₘ)</th><th>Error absoluto</th><th>Error relativo</th><th>Error %</th></tr></thead>
+    <tbody>
+      @for (iteracion of iteraciones(); track iteracion.numero; let indice = $index; let ultima = $last) {
+        <tr tabindex="0" (click)="seleccionar.emit(indice)" (keydown.enter)="seleccionar.emit(indice)" [class.activa]="indice === indiceActivo()" [class.ultima]="ultima">
+          <td>{{ iteracion.numero }}</td><td>{{ iteracion.extremoIzquierdo | numero }}</td><td>{{ iteracion.extremoDerecho | numero }}</td>
+          <td>{{ iteracion.valorExtremoIzquierdo | numero }}</td><td>{{ iteracion.valorExtremoDerecho | numero }}</td>
+          <td>{{ iteracion.puntoMedio | numero }}</td><td>{{ iteracion.valorPuntoMedio | numero }}</td>
+          <td>{{ iteracion.errorAbsoluto | numero }}</td><td>{{ iteracion.errorRelativo | numero }}</td><td>{{ iteracion.errorPorcentual | numero }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,15 @@
+<section class="resultado-principal">
+  <div class="raiz">
+    <span>Raíz aproximada</span>
+    <strong>{{ resultado().raiz | numero:12 }}</strong>
+    <p [class.advertencia]="resultado().estado === 'MAXIMO_ITERACIONES'">
+      <i>{{ resultado().estado === 'MAXIMO_ITERACIONES' ? '!' : '✓' }}</i>{{ resultado().descripcionParada }}
+    </p>
+  </div>
+  <div class="metricas">
+    <article><span>Iteraciones</span><strong>{{ resultado().cantidadIteraciones }}</strong></article>
+    <article><span>Error absoluto final</span><strong>{{ resultado().errorAbsolutoFinal | numero:8 }}</strong></article>
+    <article><span>Residuo |f(x)|</span><strong>{{ resultado().residuoFinal | numero:8 }}</strong></article>
+    <article><span>Intervalo final</span><strong class="intervalo">[@if (resultado().iteraciones.at(-1); as ultima) {{{ ultima.nuevoExtremoIzquierdo | numero:7 }}, {{ ultima.nuevoExtremoDerecho | numero:7 }}} @else {raíz en extremo}]</strong></article>
+  </div>
+</section>

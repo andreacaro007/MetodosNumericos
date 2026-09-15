@@ -1,0 +1,9 @@
+.procedimiento { border: 1px solid var(--borde); background: white; }
+header { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: 1rem 1.2rem; background: var(--tinta); color: white; }
+header span { color: var(--lima); font-size: .63rem; text-transform: uppercase; letter-spacing: .12em; } header strong { font-size: .85rem; }
+ol { list-style: none; margin: 0; padding: 0; }
+li { display: grid; grid-template-columns: 3rem 1fr; border-bottom: 1px solid var(--borde); padding: 1.1rem; gap: .6rem; }
+li:last-child { border-bottom: 0; }.numero { font: 700 .7rem var(--fuente-mono); color: #8d938f; padding-top: .2rem; }
+h3 { margin: 0 0 .55rem; font-size: .86rem; }p { color: #59625e; margin: 0 0 .65rem; font-size: .79rem; line-height: 1.55; max-width: 60rem; }
+app-visualizador-matematico { display: block; font-size: .95rem; margin: .25rem 0; }.resultado { border-left: 2px solid var(--lima-oscuro); background: var(--crema); padding: .45rem .7rem; margin-top: .45rem; }
+li[data-tipo="CONVERGENCIA"] { background: #edf7ee; }

@@ -1,0 +1,46 @@
+<form class="panel-configuracion" [formGroup]="formulario" (ngSubmit)="enviar()">
+  <div class="panel-cabecera">
+    <span class="eyebrow">Configuración</span>
+    <span class="metodo-activo">01 · Bisección</span>
+  </div>
+
+  <section class="entrada-matematica">
+    <label for="expresion">Función <span>f(x)</span></label>
+    <textarea id="expresion" rows="2" formControlName="expresion" spellcheck="false" autocomplete="off"></textarea>
+    <div class="vista-matematica" aria-live="polite">
+      <span>Vista matemática</span>
+      @if (latex(); as formula) {
+        <app-visualizador-matematico [latex]="'f(x)=' + formula" [modoBloque]="true" />
+      } @else {
+        <p class="sintaxis-error">La expresión aún no tiene una sintaxis válida.</p>
+      }
+    </div>
+    <div class="teclado" aria-label="Funciones rápidas">
+      @for (tecla of teclas; track tecla) {
+        <button type="button" (click)="insertar(tecla)">{{ tecla }}</button>
+      }
+    </div>
+  </section>
+
+  <section class="metodos" aria-label="Método numérico">
+    <button type="button" class="metodo seleccionado"><span></span>Bisección <small>Activo</small></button>
+    <button type="button" class="metodo" disabled><span></span>Newton-Raphson <small>Próximamente</small></button>
+    <button type="button" class="metodo" disabled><span></span>Punto Fijo <small>Próximamente</small></button>
+  </section>
+
+  <div class="parametros">
+    <label>Extremo izquierdo <span>a</span><input type="number" formControlName="extremoIzquierdo" /></label>
+    <label>Extremo derecho <span>b</span><input type="number" formControlName="extremoDerecho" /></label>
+    <label class="ancho">Tolerancia <span>ε</span><input type="number" formControlName="tolerancia" step="any" /></label>
+    <label class="ancho">Máximo de iteraciones <input type="number" formControlName="maximoIteraciones" /></label>
+  </div>
+
+  <button class="resolver" type="submit"><span>Resolver ecuación</span><b>→</b></button>
+
+  <section class="ejemplos">
+    <p>Ejemplos precargados</p>
+    @for (ejemplo of ejemplos; track ejemplo.nombre) {
+      <button type="button" (click)="cargar(ejemplo)"><span>{{ ejemplo.tipo }}</span><strong>{{ ejemplo.nombre }}</strong><b>[{{ ejemplo.a }}, {{ ejemplo.b }}]</b></button>
+    }
+  </section>
+</form>

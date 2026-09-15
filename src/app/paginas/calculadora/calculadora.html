@@ -1,0 +1,57 @@
+<header class="barra-aplicacion">
+  <div class="marca"><span>∿</span><div><strong>Métodos Numéricos</strong><small>Laboratorio de cálculo científico</small></div></div>
+  <div class="estado"><i></i>Modo local · sin conexión</div>
+</header>
+
+<main>
+  <aside><app-entrada-funcion (resolver)="resolver($event)" /></aside>
+  <section class="espacio-trabajo">
+    <header class="cabecera-analisis">
+      <div><span class="eyebrow">Análisis</span><h1>Método de Bisección</h1><p>Divide el intervalo y conserva la mitad que mantiene el cambio de signo.</p></div>
+      @if (resultado(); as solucion) { <div class="formula-activa"><span>Función activa</span><app-visualizador-matematico [latex]="'f(x)=' + solucion.expresionLatex" /></div> }
+    </header>
+
+    @if (error(); as mensaje) {
+      <section class="mensaje-error"><span>!</span><div><strong>No se puede aplicar Bisección</strong><p>{{ mensaje }}</p></div></section>
+    }
+
+    @if (resultado(); as solucion) {
+      @if (solucion.iteraciones.length > 0 && iteracionActiva(); as iteracion) {
+        <section class="navegador-iteracion">
+          <button type="button" (click)="inicio()" [disabled]="indiceActivo() === 0" title="Primera iteración">|‹</button>
+          <button type="button" (click)="anterior()" [disabled]="indiceActivo() === 0" title="Anterior">‹</button>
+          <button class="reproducir" type="button" (click)="reproducir()">{{ reproduciendo() ? 'Pausar' : 'Reproducir' }}</button>
+          <button type="button" (click)="siguiente()" [disabled]="indiceActivo() === solucion.iteraciones.length - 1" title="Siguiente">›</button>
+          <button type="button" (click)="final()" [disabled]="indiceActivo() === solucion.iteraciones.length - 1" title="Última iteración">›|</button>
+          <div><strong>Iteración {{ iteracion.numero }} de {{ solucion.cantidadIteraciones }}</strong><span>Intervalo [{{ iteracion.extremoIzquierdo | numero:7 }}, {{ iteracion.extremoDerecho | numero:7 }}]</span></div>
+        </section>
+      }
+
+      <nav class="pestanas" aria-label="Vistas del resultado">
+        @for (item of pestanas; track item.id) { <button type="button" [class.activa]="pestana() === item.id" (click)="pestana.set(item.id)">{{ item.nombre }}</button> }
+      </nav>
+      <div class="contenido-pestana">
+        @switch (pestana()) {
+          @case ('resumen') { <app-resumen-resultado [resultado]="solucion" /> }
+          @case ('grafica') {
+            @if (iteracionActiva(); as iteracion) {
+              @defer (when pestana() === 'grafica') {
+                <app-grafica-biseccion [expresion]="solucion.expresionNormalizada" [iteracion]="iteracion" [raiz]="solucion.raiz" />
+              } @placeholder { <p class="sin-iteraciones">Preparando la gráfica interactiva…</p> }
+            } @else { <p class="sin-iteraciones">La raíz se encontró en un extremo; no fue necesario iterar.</p> }
+          }
+          @case ('iteraciones') { <app-tabla-iteraciones [iteraciones]="solucion.iteraciones" [indiceActivo]="indiceActivo()" (seleccionar)="indiceActivo.set($event)" /> }
+          @case ('pasos') { @if (iteracionActiva(); as iteracion) { <app-paso-a-paso [iteracion]="iteracion" [expresionLatex]="solucion.expresionLatex" /> } @else { <p class="sin-iteraciones">La función ya era cero en un extremo del intervalo.</p> } }
+          @case ('analisis') {
+            <section class="analisis-previo"><h2>Diagnóstico del método</h2>
+              <div><span>Función válida</span><strong>✓</strong></div><div><span>f(a) evaluable</span><strong>✓</strong></div><div><span>f(b) evaluable</span><strong>✓</strong></div><div><span>Cambio de signo inicial</span><strong>✓</strong></div><div><span>Método aplicable</span><strong>✓</strong></div>
+              <p>La Bisección presupone continuidad en el intervalo. La aplicación verifica evaluabilidad y cambio de signo, pero no afirma continuidad simbólica cuando no puede demostrarla.</p>
+            </section>
+          }
+        }
+      </div>
+    } @else if (!error()) {
+      <section class="estado-inicial"><span class="numero-grande">½</span><div><span class="eyebrow">Listo para calcular</span><h2>Encuentra una raíz,<br />observa cada decisión.</h2><p>Configura la función y el intervalo. El resultado, la gráfica y el procedimiento se construirán a partir de una única ejecución.</p></div></section>
+    }
+  </section>
+</main>

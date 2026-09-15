@@ -1,0 +1,16 @@
+<section class="procedimiento">
+  <header><span>Procedimiento determinista</span><strong>Iteración {{ iteracion().numero }}</strong></header>
+  <ol>
+    @for (paso of pasos(); track paso.titulo; let numero = $index) {
+      <li [attr.data-tipo]="paso.tipo">
+        <span class="numero">{{ (numero + 1).toString().padStart(2, '0') }}</span>
+        <div><h3>{{ paso.titulo }}</h3>
+          @if (paso.explicacion) { <p>{{ paso.explicacion }}</p> }
+          @if (paso.formulaLatex) { <app-visualizador-matematico [latex]="paso.formulaLatex" [modoBloque]="true" /> }
+          @if (paso.sustitucionLatex) { <app-visualizador-matematico [latex]="paso.sustitucionLatex" [modoBloque]="true" /> }
+          @if (paso.resultadoLatex) { <div class="resultado"><app-visualizador-matematico [latex]="paso.resultadoLatex" [modoBloque]="true" /></div> }
+        </div>
+      </li>
+    }
+  </ol>
+</section>
