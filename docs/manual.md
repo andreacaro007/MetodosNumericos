@@ -129,6 +129,35 @@ xₙ₊₁ = g(xₙ)
 
 La elección de g(x) afecta directamente la convergencia. La condición local |g'(x)| < 1 cerca del punto fijo es favorable, pero no constituye una garantía global universal. La aplicación distingue el residuo de punto fijo |g(x)-x| del residuo de la ecuación original |f(x)| y advierte cuando la transformación no satisface adecuadamente la ecuación original.
 
+## 11.1. Respuesta académica
+
+La sección **Respuesta académica** aparece debajo de las métricas del Resumen. Se genera con reglas deterministas y utiliza exactamente los parámetros, iteraciones, estados, errores y residuos calculados por los solucionadores. No utiliza inteligencia artificial, no interpreta el texto de un enunciado y no intenta deducir preguntas, unidades físicas ni información externa.
+
+Para **Bisección** presenta f(a), f(b), el producto de signos, la advertencia sobre continuidad, la cota teórica de iteraciones, las primeras cuatro iteraciones disponibles con su nuevo intervalo real y la conclusión de la ejecución. La cota se calcula mediante:
+
+~~~text
+N = ceil(log₂(|b-a| / ε))
+~~~
+
+Esta N es una cota teórica basada en la reducción sucesiva del intervalo, no el número exacto que siempre realizará el programa. La ejecución puede detenerse antes por raíz exacta, residuo o error absoluto, o alcanzar el máximo configurado.
+
+Para **Newton-Raphson** muestra x₀, f(x₀), f'(x₀), la interpretación de la derivada inicial y el resultado real. No calcula una cantidad teórica de iteraciones ni garantiza convergencia.
+
+Para **Punto Fijo** muestra f(x), g(x), x₀, g'(x₀), |g'(x₀)|, los dos residuos y si la transformación satisface la ecuación original. Una condición local |g'(x₀)| < 1 es favorable, pero no constituye una garantía global.
+
+## 11.2. ¿Por qué Punto Fijo solicita f(x) y g(x)?
+
+El problema original es f(x)=0. Para aplicar Punto Fijo se elige una transformación x=g(x) y se itera xₙ₊₁=g(xₙ). La aplicación solicita ambas expresiones porque cumplen propósitos distintos:
+
+- **g(x)** construye la sucesión de aproximaciones.
+- **f(x)** verifica que la aproximación también resuelva el problema original.
+
+El **residuo de Punto Fijo** |g(x*)-x*| responde si x* es realmente un punto fijo de g. El **residuo original** |f(x*)| responde si x* resuelve la ecuación f(x)=0. Un residuo de Punto Fijo pequeño no sustituye la segunda comprobación.
+
+Por ejemplo, para f(x)=cos(x)-x, una g(x) mal elegida puede converger a un punto que cumple x=g(x) sin anular suficientemente f(x). En ese caso la aplicación muestra la inconsistencia y pide revisar la transformación.
+
+La aplicación no genera g(x) automáticamente porque una misma ecuación admite múltiples transformaciones con comportamientos diferentes: unas convergen, otras divergen u oscilan y pueden tener restricciones de dominio distintas. Elegir y justificar g(x) forma parte del planteamiento matemático.
+
 ## 12. Análisis científico
 
 La pestaña **Análisis científico** funciona antes o después de resolver. Presenta clasificación estructural, primera y segunda derivada, restricciones detectadas, evaluación puntual, exploración numérica y una gráfica general interactiva.
@@ -213,6 +242,22 @@ Después de comparar, pulsa **Exportar comparación (.md)**. El archivo incluye 
 Markdown es texto plano legible en Bloc de notas, Visual Studio Code, GitHub y otros editores. La exportación no requiere Internet y no modifica el manual oficial del proyecto.
 
 ## 23. Ejemplos completos
+
+### Ejercicio real del parcial
+
+Configura Bisección con:
+
+~~~text
+f(x) = 10*(0.5*pi - asin(x) - x*sqrt(1-x^2)) - 12.4
+a = 0
+b = 1
+tolerancia = 0.0000001
+máximo de iteraciones = 100
+~~~
+
+La Respuesta académica muestra aproximadamente f(0)=3.3079632679, f(1)=-12.4 y un producto negativo. Esto prueba el cambio de signo observado; la garantía clásica de Bisección requiere además continuidad en [0,1]. La cota teórica es N=ceil(log₂(1/10⁻⁷))=24 y se distingue de las iteraciones realmente realizadas.
+
+Las primeras cuatro aproximaciones son xₘ=0.5, 0.25, 0.125 y 0.1875, con nuevos intervalos [0,0.5], [0,0.25], [0.125,0.25] y [0.125,0.1875]. La raíz obtenida debe quedar alrededor de x≈0.166166. Si el enunciado asigna unidades físicas a x, esas unidades se interpretan a partir del problema; la aplicación no las infiere.
 
 ### Bisección
 

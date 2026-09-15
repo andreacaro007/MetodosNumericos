@@ -11,3 +11,24 @@
 .metricas strong { display: block; margin-top: .38rem; font: 650 1rem var(--fuente-mono); overflow-wrap: anywhere; }
 .metricas .intervalo { font-size: .75rem; letter-spacing: -.03em; }
 @media (max-width: 780px) { .resultado-principal { grid-template-columns: 1fr; }.raiz { border-right: 0; border-bottom: 1px solid var(--borde); } }
+.respuesta-academica { margin-top: 1.25rem; border: 1px solid var(--borde); background: #fff; }
+.respuesta-academica > header { padding: 1.15rem 1.35rem; border-bottom: 1px solid var(--borde); background: var(--crema); }
+.respuesta-academica > header span { color: var(--gris); text-transform: uppercase; letter-spacing: .12em; font-size: .65rem; font-weight: 750; }
+.respuesta-academica h2 { margin: .2rem 0 0; font-size: 1.2rem; }
+.bloque-academico { padding: 1.15rem 1.35rem; border-bottom: 1px solid var(--borde); }
+.bloque-academico:last-child { border-bottom: 0; }
+.bloque-academico h3 { margin: 0 0 .7rem; font-size: .85rem; }
+.bloque-academico p { margin: .65rem 0 0; font-size: .78rem; line-height: 1.55; }
+.datos-en-linea { display: flex; flex-wrap: wrap; gap: .55rem 1.25rem; font: .75rem var(--fuente-mono); }
+.datos-en-linea span { overflow-wrap: anywhere; }
+.nota { padding: .7rem .8rem; border-left: 3px solid #c48a43; background: #fff8ec; color: #67461f; }
+.formula, .resultado-cota { font: 650 .9rem var(--fuente-mono); }
+.resultado-cota { color: var(--verde); }
+.tabla-contenedor { overflow-x: auto; }
+.primeras-iteraciones table { width: 100%; border-collapse: collapse; font: .72rem var(--fuente-mono); }
+.primeras-iteraciones th, .primeras-iteraciones td { padding: .55rem .65rem; border: 1px solid var(--borde); text-align: right; white-space: nowrap; }
+.primeras-iteraciones th { background: var(--crema); }
+.residuos-punto-fijo { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.residuos-punto-fijo strong { font: 650 .8rem var(--fuente-mono); }
+.conclusion-academica { background: #f6faf7; }
+@media (max-width: 620px) { .residuos-punto-fijo { grid-template-columns: 1fr; } }

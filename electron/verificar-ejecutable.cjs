@@ -57,6 +57,7 @@ async function ejecutar() {
       return respuesta.result.value;
     },
   };
+  const establecerCampo = (selector, valor) => cdp.evaluar('(() => { const elemento = document.querySelector(' + JSON.stringify(selector) + '); elemento.value = ' + JSON.stringify(valor) + '; elemento.dispatchEvent(new Event(\'input\', { bubbles: true })); })()');
 
   const seguridad = await cdp.evaluar(`({ titulo: document.title, require: typeof require, protocolo: location.protocol })`);
   if (seguridad.titulo !== 'Métodos Numéricos' || seguridad.require !== 'undefined' || seguridad.protocolo !== 'file:') {
@@ -82,6 +83,20 @@ async function ejecutar() {
   await esperar(150);
   const exponencial = await esperarValor(cdp, '.raiz > strong');
   validarCercania(exponencial, 0.5671432904);
+
+  await establecerCampo('#expresion', '10*(0.5*pi - asin(x) - x*sqrt(1-x^2)) - 12.4');
+  await establecerCampo('[formcontrolname=extremoIzquierdo]', '0');
+  await establecerCampo('[formcontrolname=extremoDerecho]', '1');
+  await establecerCampo('[formcontrolname=tolerancia]', '0.0000001');
+  await establecerCampo('[formcontrolname=maximoIteraciones]', '100');
+  await cdp.evaluar('document.querySelector(\'button[type=submit]\').click()');
+  await esperar(200);
+  const raizParcial = await esperarValor(cdp, '.raiz > strong');
+  validarCercania(raizParcial, 0.166166, 0.000002);
+  const respuestaParcial = await cdp.evaluar('({ titulo: document.body.textContent.includes(\'Respuesta académica\'), cambioSigno: document.body.textContent.includes(\'Existe un cambio de signo\'), cota: document.querySelector(\'.resultado-cota\')?.textContent?.includes(\'N = 24\'), filas: document.querySelectorAll(\'.respuesta-academica table tr\').length, contenido: document.querySelector(\'.respuesta-academica\')?.textContent })');
+  if (!respuestaParcial.titulo || !respuestaParcial.cambioSigno || !respuestaParcial.cota || respuestaParcial.filas < 5 || !respuestaParcial.contenido?.includes('0.1875')) {
+    throw new Error('La respuesta académica del ejercicio real no coincide con la aceptación: ' + JSON.stringify(respuestaParcial));
+  }
 
   await cdp.evaluar(`[...document.querySelectorAll('.pestanas button')].find(b => b.textContent.includes('Gráfica')).click()`);
   await esperar(500);
@@ -120,8 +135,8 @@ async function ejecutar() {
     g: document.querySelector('#expresionIteracion').value,
     x0: document.querySelector('[formcontrolname="valorInicial"]').value
   })`);
-  if (estadoInicialPuntoFijo.f || estadoInicialPuntoFijo.g || estadoInicialPuntoFijo.x0) {
-    throw new Error('Punto Fijo no inicia vacío en f(x), g(x) y x₀: ' + JSON.stringify(estadoInicialPuntoFijo));
+  if (estadoInicialPuntoFijo.f !== 'exp(-x) - x' || estadoInicialPuntoFijo.g || estadoInicialPuntoFijo.x0 !== '0.5') {
+    throw new Error('Punto Fijo no conservó f(x) y x₀ o completó g(x) automáticamente: ' + JSON.stringify(estadoInicialPuntoFijo));
   }
 
   await cdp.evaluar(`document.querySelectorAll('.ejemplos button')[0].click(); document.querySelector('button[type="submit"]').click()`);
@@ -290,7 +305,7 @@ async function ejecutar() {
     throw new Error('No se mostró la advertencia de transformación inconsistente con f(x)=0.');
   }
 
-  if (!grafica || !derivada || !tangente || !derivadaCero || !entradaInvalida || !maximoIteraciones || responsive.some((vista) => !vista.sinScrollHorizontal || !vista.graficaVisible || !vista.resolverDisponible) || paso !== 'Iteración 1' || cantidadPasos < 7 || cdp.errores.length) {
+  if (!respuestaParcial.titulo || !grafica || !derivada || !tangente || !derivadaCero || !entradaInvalida || !maximoIteraciones || responsive.some((vista) => !vista.sinScrollHorizontal || !vista.graficaVisible || !vista.resolverDisponible) || paso !== 'Iteración 1' || cantidadPasos < 7 || cdp.errores.length) {
     throw new Error(`Fallo de interfaz: ${JSON.stringify({ grafica, derivada, tangente, derivadaCero, entradaInvalida, maximoIteraciones, responsive, paso, cantidadPasos, errores: cdp.errores })}`);
   }
 
@@ -299,6 +314,7 @@ async function ejecutar() {
     seguridad,
     resultados: {
       biseccion: { polinomica, trigonometrica, exponencial },
+      ejercicioParcial: { raiz: raizParcial, respuestaAcademica: respuestaParcial },
       newton: { polinomica: newtonPolinomica, trigonometrica: newtonTrigonometrica, exponencial: newtonExponencial },
       puntoFijo: { trigonometrica: pfTrigonometrica, exponencial: pfExponencial, polinomica: pfPolinomica }
     },

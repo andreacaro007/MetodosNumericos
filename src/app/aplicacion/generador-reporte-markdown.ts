@@ -7,6 +7,9 @@ import type { MetodoNumerico } from '../core/metodos-numericos/compartido/modelo
 import type { ResultadoBiseccion } from '../core/metodos-numericos/biseccion/modelos-biseccion';
 import type { ResultadoNewton } from '../core/metodos-numericos/newton/modelos-newton';
 import type { ResultadoPuntoFijo } from '../core/metodos-numericos/punto-fijo/modelos-punto-fijo';
+import { ConstructorRespuestaBiseccion } from '../core/respuestas-academicas/constructor-respuesta-biseccion';
+import { ConstructorRespuestaNewton } from '../core/respuestas-academicas/constructor-respuesta-newton';
+import { ConstructorRespuestaPuntoFijo } from '../core/respuestas-academicas/constructor-respuesta-punto-fijo';
 
 const NOMBRES_METODOS: Record<MetodoNumerico, string> = {
   BISECCION: 'Bisección',
@@ -43,6 +46,7 @@ export class GeneradorReporteMarkdown {
       '- Residuo |f(x)|: ' + this.numero(resultado.residuoFinal),
       '- Razón de parada: ' + this.texto(resultado.descripcionParada),
       '',
+      ...this.respuestaAcademica(resultado),
       '## Iteraciones',
       '',
       ...this.tablaIteraciones(resultado),
@@ -54,6 +58,52 @@ export class GeneradorReporteMarkdown {
       '',
     ];
     return lineas.join('\n');
+  }
+
+  private respuestaAcademica(resultado: ResultadoAplicacion): string[] {
+    if (resultado.metodo === 'BISECCION') {
+      const respuesta = new ConstructorRespuestaBiseccion().construir(resultado as ResultadoBiseccion);
+      return [
+        '## Respuesta académica', '', '### Aplicabilidad del método', '',
+        '- f(a): ' + this.numero(respuesta.valorA), '- f(b): ' + this.numero(respuesta.valorB),
+        '- f(a) · f(b): ' + this.numero(respuesta.productoExtremos), '',
+        this.texto(respuesta.aplicabilidad), '', this.texto(respuesta.advertenciaContinuidad), '',
+        ...(respuesta.cotaIteraciones ? [
+          '### Cota teórica de iteraciones', '', respuesta.cotaIteraciones.formula, '',
+          'Sustitución: ' + respuesta.cotaIteraciones.sustitucion, '',
+          'N = ceil(' + this.numero(respuesta.cotaIteraciones.valorLogaritmo) + ') = ' + respuesta.cotaIteraciones.iteraciones, '',
+          'La ejecución realizó ' + respuesta.resultado.cantidadIteraciones + ' iteraciones.', '',
+        ] : []),
+        '### Primeras cuatro iteraciones', '',
+        '| n | a | b | xₘ | f(xₘ) | Nuevo intervalo |',
+        '| ---: | ---: | ---: | ---: | ---: | --- |',
+        ...respuesta.primerasIteraciones.map((iteracion) => '| ' + [
+          iteracion.numero, this.numero(iteracion.extremoIzquierdo), this.numero(iteracion.extremoDerecho),
+          this.numero(iteracion.puntoMedio), this.numero(iteracion.valorPuntoMedio),
+          '[' + this.numero(iteracion.nuevoExtremoIzquierdo) + ', ' + this.numero(iteracion.nuevoExtremoDerecho) + ']',
+        ].join(' | ') + ' |'),
+        ...(respuesta.notaPrimerasIteraciones ? ['', respuesta.notaPrimerasIteraciones] : []),
+        '', this.texto(respuesta.conclusion), '',
+      ];
+    }
+    if (resultado.metodo === 'NEWTON_RAPHSON') {
+      const respuesta = new ConstructorRespuestaNewton().construir(resultado as ResultadoNewton);
+      return [
+        '## Respuesta académica', '', '### Condiciones iniciales', '',
+        '- x₀: ' + this.numero(respuesta.valorInicial), '- f(x₀): ' + this.numero(respuesta.valorFuncionInicial),
+        '- f\'(x₀): ' + this.numero(respuesta.valorDerivadaInicial), '',
+        this.texto(respuesta.interpretacion), '', this.texto(respuesta.conclusion), '',
+      ];
+    }
+    const respuesta = new ConstructorRespuestaPuntoFijo().construir(resultado as ResultadoPuntoFijo);
+    return [
+      '## Respuesta académica', '', '### Condiciones iniciales', '',
+      '- f(x): ' + this.texto(respuesta.expresionOriginal), '- g(x): ' + this.texto(respuesta.expresionIteracion),
+      '- x₀: ' + this.numero(respuesta.valorInicial), '- g\'(x₀): ' + this.numero(respuesta.valorDerivadaInicial),
+      '- |g\'(x₀)|: ' + this.numero(respuesta.moduloDerivadaInicial), '', this.texto(respuesta.interpretacion), '',
+      '- Residuo de Punto Fijo |g(x*) - x*|: ' + this.numero(respuesta.residuoPuntoFijo),
+      '- Residuo original |f(x*)|: ' + this.numero(respuesta.residuoOriginal), '', this.texto(respuesta.conclusion), '',
+    ];
   }
 
   generarComparacion(comparacion: ResultadoComparacion): string {

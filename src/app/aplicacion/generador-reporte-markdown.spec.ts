@@ -19,6 +19,7 @@ describe('GeneradorReporteMarkdown', () => {
     expect(markdown).toContain('Método: Newton-Raphson');
     expect(markdown).toContain('Valor inicial x₀: 1.5');
     expect(markdown).toContain('Raíz aproximada:');
+    expect(markdown).toContain('## Respuesta académica');
     expect(markdown).toContain('| n | xₙ |');
     expect(markdown).toContain('## Conclusión');
     expect(markdown).not.toContain('undefined');
