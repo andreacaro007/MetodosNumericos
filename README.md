@@ -1,6 +1,6 @@
 # Métodos Numéricos
 
-Aplicación de escritorio educativa para estudiar métodos numéricos de forma visual, verificable y completamente offline. Incluye **Bisección**, **Newton-Raphson** y **Punto Fijo** de extremo a extremo: entrada científica, validación, solución, errores, tablas, explicación determinista, gráficas interactivas y diagrama de telaraña (Cobweb Plot).
+Aplicación de escritorio educativa para estudiar métodos numéricos y analizar funciones reales de forma visual, verificable y completamente offline. Incluye **Bisección**, **Newton-Raphson** y **Punto Fijo**, además de un motor científico independiente para explorar una función antes de resolverla.
 
 ## Características
 
@@ -8,6 +8,15 @@ Aplicación de escritorio educativa para estudiar métodos numéricos de forma v
 - Sintaxis amigable: `2x`, `3(x+1)`, `ln(x)`, `π`, trigonometría y exponenciales.
 - Bisección, Newton-Raphson y Punto Fijo implementados en TypeScript sin solucionadores externos.
 - Derivación simbólica automática con math.js y tangente sincronizada por iteración.
+- Primera y segunda derivada en el panel de análisis científico, renderizadas con KaTeX.
+- Evaluación puntual de `f(x)` con sustitución matemática y resultado numérico.
+- Clasificación estructural de funciones y avisos sobre divisiones, logaritmos y radicales.
+- Exploración configurable por muestreo, con mínimo y máximo observados y puntos no evaluables.
+- Detección heurística de intervalos candidatos para Bisección y zonas cercanas a cero.
+- Sugerencias justificadas de `x₀` para Newton-Raphson, sin prometer convergencia.
+- Transferencia de intervalos y valores iniciales al método elegido sin resolver automáticamente.
+- Gráfica general previa con zoom, desplazamiento y reinicio de vista.
+- Teclado científico por categorías con inserción en la posición del cursor.
 - Diagrama Cobweb (telaraña) para Punto Fijo con curva $g(x)$ y recta identidad $y=x$.
 - Análisis riguroso de convergencia local mediante $|g'(x_0)|$ y seguimiento en cada iteración.
 - Verificación cruzada entre el punto fijo de $g(x)$ y la satisfacción de la ecuación original $f(x)=0$.
@@ -50,12 +59,14 @@ El build local queda en `dist/numerical-lab/browser`. El ejecutable portable que
 ## Arquitectura
 
 ```text
-Electron → Angular UI → Caso de uso → SolucionadorBiseccion
-                                      ↓
-                              EvaluadorExpresiones → math.js
+Electron → Angular UI ─┬→ Casos de uso → Bisección / Newton / Punto Fijo
+                      └→ CasoUsoAnalizarFuncion → motor de análisis científico
+                                                   ↓
+                         Analizador / Derivador / Evaluador → math.js
+                         KaTeX ← fórmulas     JSXGraph ← gráficas
 ```
 
-La solución se calcula una sola vez. Resumen, gráfica, tabla y pasos consumen el mismo `ResultadoBiseccion`.
+Los solucionadores mantienen sus propios resultados inmutables para resumen, gráfica, tabla y pasos. El análisis científico reutiliza el mismo parser seguro, compilación y derivador, pero no ejecuta automáticamente ningún método.
 
 ## Documentación
 
@@ -71,7 +82,8 @@ La solución se calcula una sola vez. Resumen, gráfica, tabla y pasos consumen 
 1. GOAL-001 — Fundación, Electron y Bisección.
 2. GOAL-002 — Newton-Raphson, derivación simbólica y tangentes. **Implementado**.
 3. GOAL-003 — Punto Fijo con análisis de convergencia y Cobweb Plot. **Implementado**.
-4. GOAL-004 — Motor científico avanzado.
+4. GOAL-004 — Motor científico avanzado. **Implementado**.
+5. GOAL-005 — Integración académica final, comparación, exportaciones y pulido general.
 
 No se utiliza IA para calcular raíces ni para redactar el procedimiento matemático.
 

@@ -18,7 +18,12 @@ export class EvaluadorExpresiones {
     } catch {
       throw new ErrorExpresionMatematica(`No se pudo evaluar la función en x = ${this.formatear(x)}.`);
     }
-    if (typeof resultado !== 'number' || !Number.isFinite(resultado)) {
+    if (typeof resultado !== 'number') {
+      throw new ErrorExpresionMatematica(
+        `La función produce un valor no finito fuera del dominio real en x = ${this.formatear(x)}.`
+      );
+    }
+    if (!Number.isFinite(resultado)) {
       throw new ErrorExpresionMatematica(`La función produce un valor no finito en x = ${this.formatear(x)}.`);
     }
     return resultado;

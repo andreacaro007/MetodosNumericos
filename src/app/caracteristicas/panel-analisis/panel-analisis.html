@@ -1,0 +1,301 @@
+@if (mensajeTransferencia(); as mensaje) {
+  <div class="aviso-exito" role="status">
+    ✓ {{ mensaje }}
+  </div>
+}
+
+@if (errorAnalisis(); as error) {
+  <div class="aviso-matematico" role="alert">
+    <span class="icono">!</span>
+    <div><strong>Aviso de análisis:</strong> {{ error }}</div>
+  </div>
+}
+
+@if (analisis(); as datos) {
+  <article class="tarjeta-analisis">
+    <header>
+      <h2>Ficha científica de la función</h2>
+      <span class="badge-tipo">{{ datos.clasificacion.nombre }}</span>
+    </header>
+
+    <p style="margin: 0; font-size: 0.85rem; color: var(--texto-secundario);">
+      {{ datos.clasificacion.descripcion }}
+    </p>
+
+    <div class="seccion-derivadas">
+      <div class="caja-formula">
+        <span class="etiqueta">Función original</span>
+        <app-visualizador-matematico [latex]="'f(x)=' + datos.expresion.latex" [modoBloque]="true" />
+      </div>
+
+      @if (datos.derivada; as d1) {
+        <div class="caja-formula">
+          <span class="etiqueta">Primera derivada</span>
+          <app-visualizador-matematico [latex]="&quot;f'(x)=&quot; + d1.latex" [modoBloque]="true" />
+        </div>
+      }
+
+      @if (datos.segundaDerivada; as d2) {
+        <div class="caja-formula">
+          <span class="etiqueta">Segunda derivada</span>
+          <app-visualizador-matematico [latex]="&quot;f''(x)=&quot; + d2.latex" [modoBloque]="true" />
+        </div>
+      }
+    </div>
+
+    @if (datos.restriccionesEstructurales.length > 0) {
+      <div class="aviso-matematico">
+        <span class="icono">ⓘ</span>
+        <div>
+          <strong>Restricciones estructurales detectadas en la expresión:</strong>
+          <ul style="margin: 0.25rem 0 0 1rem; padding: 0;">
+            @for (res of datos.restriccionesEstructurales; track res.tipo) {
+              <li><strong>{{ res.descripcion }}:</strong> {{ res.detalle }}</li>
+            }
+          </ul>
+        </div>
+      </div>
+    }
+  </article>
+
+  <article class="tarjeta-analisis">
+    <header>
+      <h2>Evaluación puntual f(x)</h2>
+    </header>
+
+    <section class="seccion-evaluador">
+      <div class="fila-controles">
+        <label for="input-punto-x">Evaluar en x =</label>
+        <input
+          id="input-punto-x"
+          type="number"
+          step="any"
+          [value]="puntoX()"
+          (input)="actualizarPuntoX($event)"
+          placeholder="Valor de x"
+        />
+        <button type="button" class="btn-evaluar" (click)="evaluarPunto()">
+          Evaluar
+        </button>
+      </div>
+
+      @if (errorEvaluacion(); as errEval) {
+        <div class="aviso-matematico">
+          <span class="icono">!</span>
+          <div>{{ errEval }}</div>
+        </div>
+      }
+
+      @if (evaluacionPuntual(); as ev) {
+        <div class="resultado-evaluacion">
+          <span class="titulo-eval">Sustitución y cálculo:</span>
+          <app-visualizador-matematico
+            [latex]="'f(' + ev.x + ') = ' + ev.sustitucionLatex + ' = ' + (ev.resultado | numero:8)"
+            [modoBloque]="true"
+          />
+          <span class="valor-eval">Resultado: f({{ ev.x }}) = {{ ev.resultado | numero:10 }}</span>
+        </div>
+      }
+    </section>
+  </article>
+
+  <article class="tarjeta-analisis">
+    <header>
+      <h2>Exploración numérica de intervalo</h2>
+    </header>
+
+    <section class="seccion-exploracion">
+      <div class="fila-rango">
+        <div class="campo-rango">
+          <label for="rango-desde">Desde:</label>
+          <input
+            id="rango-desde"
+            type="number"
+            step="any"
+            [value]="rangoDesde()"
+            (input)="actualizarRangoDesde($event)"
+          />
+        </div>
+        <div class="campo-rango">
+          <label for="rango-hasta">Hasta:</label>
+          <input
+            id="rango-hasta"
+            type="number"
+            step="any"
+            [value]="rangoHasta()"
+            (input)="actualizarRangoHasta($event)"
+          />
+        </div>
+        <div class="campo-rango">
+          <label for="rango-muestras">Muestras:</label>
+          <input
+            id="rango-muestras"
+            type="number"
+            min="50"
+            max="2000"
+            step="50"
+            [value]="muestras()"
+            (input)="actualizarMuestras($event)"
+          />
+        </div>
+        <button type="button" class="btn-explorar" (click)="ejecutarExploracion()">
+          Explorar intervalo
+        </button>
+      </div>
+
+      <div class="aviso-matematico">
+        <span class="icono">⚠️</span>
+        <div>
+          La exploración numérica detecta cambios de signo en puntos muestreados. Puede no detectar raíces de multiplicidad par y un cambio de signo alrededor de una discontinuidad no garantiza por sí solo la existencia de una raíz.
+        </div>
+      </div>
+
+      @if (exploracion(); as exp) {
+        <div class="resumen-muestreo">
+          <div class="metrica">
+            <span class="nom">Muestras evaluadas</span>
+            <span class="val">{{ exp.resumen.evaluables }} / {{ exp.resumen.totalMuestras }}</span>
+          </div>
+          <div class="metrica">
+            <span class="nom">Valores no evaluables</span>
+            <span class="val">{{ exp.resumen.noEvaluables }}</span>
+          </div>
+          <div class="metrica">
+            <span class="nom">Mínimo observado</span>
+            <span class="val">
+              @if (exp.resumen.minimoObservado; as minO) {
+                f({{ minO.x | numero:3 }}) ≈ {{ minO.y | numero:4 }}
+              } @else {
+                -
+              }
+            </span>
+          </div>
+          <div class="metrica">
+            <span class="nom">Máximo observado</span>
+            <span class="val">
+              @if (exp.resumen.maximoObservado; as maxO) {
+                f({{ maxO.x | numero:3 }}) ≈ {{ maxO.y | numero:4 }}
+              } @else {
+                -
+              }
+            </span>
+          </div>
+        </div>
+
+        @for (advertencia of exp.advertencias; track advertencia) {
+          <div class="aviso-matematico">
+            <span class="icono">⚠️</span>
+            <div>{{ advertencia }}</div>
+          </div>
+        }
+
+        @if (puntosNoEvaluables().length > 0) {
+          <div class="aviso-matematico">
+            <span class="icono">⚠️</span>
+            <div>
+              <strong>Ejemplos no evaluables:</strong>
+              @for (punto of puntosNoEvaluables(); track punto.x) {
+                <span> x = {{ punto.x | numero:4 }} ({{ punto.motivoNoEvaluable }})</span>
+              }
+            </div>
+          </div>
+        }
+
+        <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+          <h3 style="margin: 0; font-size: 0.95rem; font-weight: 600; color: var(--texto-primario);">
+            Intervalos candidatos para Bisección (cambios de signo observados)
+          </h3>
+
+          @if (exp.intervalosCandidatos.length > 0) {
+            <div class="lista-candidatos">
+              @for (c of exp.intervalosCandidatos; track $index) {
+                <div class="item-candidato">
+                  <div class="info-candidato">
+                    <strong>Intervalo [{{ c.a | numero:4 }}, {{ c.b | numero:4 }}]</strong>
+                    <small>
+                      f(a) = {{ c.fa | numero:4 }} · f(b) = {{ c.fb | numero:4 }} · Estimación x* ≈ {{ c.estimacionRaiz | numero:5 }}
+                    </small>
+                  </div>
+                  <button
+                    type="button"
+                    class="btn-accion"
+                    (click)="usarEnBiseccion(c)"
+                    title="Carga este intervalo en Bisección sin resolver automáticamente"
+                  >
+                    Usar en Bisección
+                  </button>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="mensaje-vacio">No se detectaron cambios de signo en el intervalo explorado.</p>
+          }
+        </div>
+
+        @if (exp.zonasCercanasCero.length > 0) {
+          <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+            <h3 style="margin: 0; font-size: 0.95rem; font-weight: 600; color: var(--texto-primario);">
+              Zonas cercanas a cero (posibles raíces de multiplicidad par)
+            </h3>
+            <div class="lista-candidatos">
+              @for (z of exp.zonasCercanasCero; track $index) {
+                <div class="item-candidato">
+                  <div class="info-candidato">
+                    <strong>x ≈ {{ z.x | numero:4 }} · f(x) ≈ {{ z.fx | numero:4 }}</strong>
+                    <small>{{ z.razon }}</small>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+          <h3 style="margin: 0; font-size: 0.95rem; font-weight: 600; color: var(--texto-primario);">
+            Valores iniciales sugeridos para Newton-Raphson
+          </h3>
+
+          @if (exp.sugerenciasNewton.length > 0) {
+            <div class="lista-sugerencias">
+              @for (sug of exp.sugerenciasNewton; track $index) {
+                <div class="item-sugerencia">
+                  <div class="info-sugerencia">
+                    <span class="titulo-x0">x₀ sugerido: {{ sug.x0 }}</span>
+                    <p class="motivo"><strong>Motivo:</strong> {{ sug.razon }}</p>
+                  </div>
+                  <button
+                    type="button"
+                    class="btn-accion-newton"
+                    (click)="usarEnNewton(sug)"
+                    title="Carga este valor x₀ en Newton-Raphson sin resolver automáticamente"
+                  >
+                    Usar como x₀ en Newton
+                  </button>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="mensaje-vacio">No se encontraron sugerencias claras para Newton en este rango.</p>
+          }
+        </div>
+      }
+    </section>
+  </article>
+
+  <article class="tarjeta-analisis">
+    <header>
+      <h2>Gráfica general interactiva</h2>
+    </header>
+    <app-grafica-general
+      [expresion]="expresion()"
+      [intervalosCandidatos]="exploracion()?.intervalosCandidatos ?? []"
+      [rango]="{ desde: rangoDesde(), hasta: rangoHasta() }"
+    />
+  </article>
+} @else {
+  <article class="tarjeta-analisis">
+    <p class="mensaje-vacio">
+      Ingresa una función matemática en el panel izquierdo para ver su análisis científico, derivadas y gráfica general.
+    </p>
+  </article>
+}

@@ -24,10 +24,52 @@
         <p class="vista-vacia">{{ metodo() === 'PUNTO_FIJO' ? 'Las funciones y g\'(x) aparecerán aquí.' : 'La función aparecerá aquí.' }}</p>
       }
     </div>
-    <div class="teclado" aria-label="Funciones rápidas">
-      @for (tecla of teclas; track tecla.etiqueta) {
-        <button type="button" (click)="insertar(tecla.texto, tecla.retroceso)">{{ tecla.etiqueta }}</button>
-      }
+
+    <div class="contenedor-teclado-cientifico">
+      <div class="categorias-teclado" role="tablist" aria-label="Categorías del teclado científico">
+        <button
+          type="button"
+          role="tab"
+          [attr.aria-selected]="categoriaTeclado() === 'basicas'"
+          [class.activa]="categoriaTeclado() === 'basicas'"
+          (click)="cambiarCategoriaTeclado('basicas')"
+        >
+          Básicas
+        </button>
+        <button
+          type="button"
+          role="tab"
+          [attr.aria-selected]="categoriaTeclado() === 'trigonometria'"
+          [class.activa]="categoriaTeclado() === 'trigonometria'"
+          (click)="cambiarCategoriaTeclado('trigonometria')"
+        >
+          Trigonometría
+        </button>
+        <button
+          type="button"
+          role="tab"
+          [attr.aria-selected]="categoriaTeclado() === 'especiales'"
+          [class.activa]="categoriaTeclado() === 'especiales'"
+          (click)="cambiarCategoriaTeclado('especiales')"
+        >
+          Especiales
+        </button>
+        <button
+          type="button"
+          role="tab"
+          [attr.aria-selected]="categoriaTeclado() === 'operadores'"
+          [class.activa]="categoriaTeclado() === 'operadores'"
+          (click)="cambiarCategoriaTeclado('operadores')"
+        >
+          Operadores
+        </button>
+      </div>
+
+      <div class="teclado" aria-label="Teclado científico">
+        @for (tecla of teclasActivas(); track tecla.etiqueta) {
+          <button type="button" (click)="insertar(tecla)">{{ tecla.etiqueta }}</button>
+        }
+      </div>
     </div>
   </section>
 
@@ -37,23 +79,31 @@
     <button type="button" class="metodo" [class.seleccionado]="metodo() === 'PUNTO_FIJO'" (click)="seleccionar('PUNTO_FIJO')"><span></span>Punto Fijo <small>Disponible</small></button>
   </section>
 
-  <div class="parametros">
+  <section class="parametros">
     @if (metodo() === 'BISECCION') {
-      <label>Extremo izquierdo <span>a</span><input type="number" formControlName="extremoIzquierdo" placeholder="a" /></label>
-      <label>Extremo derecho <span>b</span><input type="number" formControlName="extremoDerecho" placeholder="b" /></label>
+      <div class="fila-intervalo">
+        <label for="extremoIzquierdo">Extremo a <input id="extremoIzquierdo" type="number" step="any" formControlName="extremoIzquierdo" placeholder="Ej: 1" /></label>
+        <label for="extremoDerecho">Extremo b <input id="extremoDerecho" type="number" step="any" formControlName="extremoDerecho" placeholder="Ej: 2" /></label>
+      </div>
     } @else {
-      <label class="ancho">Valor inicial <span>x₀</span><input type="number" formControlName="valorInicial" placeholder="x₀" /></label>
+      <div class="fila-valor-inicial">
+        <label for="valorInicial">Valor inicial x₀ <input id="valorInicial" type="number" step="any" formControlName="valorInicial" placeholder="Ej: 1.5" /></label>
+      </div>
     }
-    <label class="ancho">Tolerancia <span>ε</span><input type="number" formControlName="tolerancia" step="any" /></label>
-    <label class="ancho">Máximo de iteraciones <input type="number" formControlName="maximoIteraciones" /></label>
-  </div>
-
-  <button class="resolver" type="submit"><span>Resolver con {{ metodo() === 'BISECCION' ? 'Bisección' : metodo() === 'NEWTON_RAPHSON' ? 'Newton' : 'Punto Fijo' }}</span><b>→</b></button>
-
-  <section class="ejemplos">
-    <p>Ejemplos precargados</p>
-    @for (ejemplo of ejemplosActivos(); track ejemplo.tipo) {
-      <button type="button" (click)="cargar(ejemplo)"><span>{{ ejemplo.tipo }}</span><strong>{{ ejemplo.nombre }}</strong><b>@if (ejemplo.metodo === 'BISECCION') {[{{ ejemplo.a }}, {{ ejemplo.b }}]} @else {x₀={{ ejemplo.x0 }}}</b></button>
-    }
+    <div class="fila-criterios">
+      <label for="tolerancia">Tolerancia <input id="tolerancia" type="number" step="any" formControlName="tolerancia" /></label>
+      <label for="maximoIteraciones">Iteraciones <input id="maximoIteraciones" type="number" formControlName="maximoIteraciones" /></label>
+    </div>
   </section>
+
+  <section class="ejemplos" aria-label="Casos de prueba sugeridos">
+    <span>Ejemplos disponibles</span>
+    <div class="chips-ejemplos">
+      @for (ejemplo of ejemplosActivos(); track ejemplo.nombre) {
+        <button type="button" (click)="cargar(ejemplo)"><strong>{{ ejemplo.nombre }}</strong><small>{{ ejemplo.tipo }}</small></button>
+      }
+    </div>
+  </section>
+
+  <button class="resolver" type="submit">Resolver con {{ metodo() === 'BISECCION' ? 'Bisección' : metodo() === 'NEWTON_RAPHSON' ? 'Newton-Raphson' : 'Punto Fijo' }}</button>
 </form>

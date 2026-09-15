@@ -73,3 +73,27 @@ Los errores de sintaxis, símbolos, dominio, valores no finitos y parámetros se
     devolver máximo de iteraciones
 
 SolucionadorNewton implementa el algoritmo; math.js únicamente analiza, deriva, simplifica y evalúa. ConstructorPasosNewton transforma los datos guardados en fórmulas, sustituciones, resultados y explicaciones deterministas.
+
+## Exploración científica
+
+```text
+analizar f con la lista segura existente
+derivar f para obtener f'
+derivar f' para obtener f''
+clasificar el AST y registrar restricciones estructurales
+compilar f y f' una sola vez
+generar N muestras en [desde, hasta]
+para cada muestra:
+    evaluar f(x)
+    registrar valor real finito o punto no evaluable
+calcular mínimo y máximo observados
+para cada par consecutivo evaluable:
+    si hay cambio de signo:
+        evaluar el punto medio
+        descartar saltos no finitos o asintóticos evidentes
+        registrar intervalo candidato
+detectar mínimos locales de |f(x)| cercanos a cero
+evaluar f' en candidatos y construir sugerencias justificadas de Newton
+```
+
+El explorador no llama raíces a los cambios de signo, no resuelve automáticamente y no sustituye las validaciones de los solucionadores.

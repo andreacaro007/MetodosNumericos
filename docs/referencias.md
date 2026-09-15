@@ -13,4 +13,4 @@
 
 No se copió código de proyectos educativos externos.
 
-KaTeX presenta función, derivada, fórmulas y sustituciones. JSXGraph representa la misma iteración almacenada por cada solucionador; no inventa valores ni recalcula la raíz.
+KaTeX presenta función, primera y segunda derivada, fórmulas y sustituciones. JSXGraph representa tanto las iteraciones almacenadas por cada solucionador como la gráfica científica previa; no inventa valores ni recalcula la raíz.

@@ -28,6 +28,11 @@ describe('Motor matemático', () => {
     expect(() => evaluador.evaluar(expresion, 1)).toThrow(/no finito/i);
   });
 
+  it('explica cuando una evaluación queda fuera del dominio real', () => {
+    const expresion = analizador.analizar('sqrt(x)');
+    expect(() => evaluador.evaluar(expresion, -1)).toThrow(/fuera del dominio real/i);
+  });
+
   it.each([
     ['x^3 - x - 2', 2, 11],
     ['sin(x)', 0, 1],

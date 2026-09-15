@@ -167,6 +167,84 @@ async function ejecutar() {
     throw new Error('La pestaña Análisis no contiene las validaciones de Punto Fijo.');
   }
 
+  await cdp.evaluar(`(() => {
+    const el = document.querySelector('#expresion');
+    el.value = 'x^3 - x - 2';
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+  })()`);
+  await esperar(300);
+
+  const formulasDerivadas = await cdp.evaluar(`document.querySelectorAll('.seccion-derivadas .katex').length`);
+  if (formulasDerivadas < 3) {
+    throw new Error('No se muestran la función y sus derivadas (primera y segunda) en KaTeX.');
+  }
+
+  await cdp.evaluar(`(() => {
+    const inputX = document.querySelector('#input-punto-x');
+    inputX.value = '2';
+    inputX.dispatchEvent(new Event('input', { bubbles: true }));
+    document.querySelector('.btn-evaluar').click();
+  })()`);
+  await esperar(200);
+  const resultadoEvaluacion = await esperarValor(cdp, '.valor-eval');
+  if (!resultadoEvaluacion.includes('4')) {
+    throw new Error('La evaluación de f(2) no arrojó 4: ' + resultadoEvaluacion);
+  }
+
+  const cantidadCandidatos = await cdp.evaluar(`document.querySelectorAll('.item-candidato').length`);
+  if (cantidadCandidatos === 0) {
+    throw new Error('No se detectaron intervalos candidatos para Bisección.');
+  }
+
+  const graficaGeneralSvg = await cdp.evaluar(`Boolean(document.querySelector('app-grafica-general .jxgbox svg'))`);
+  if (!graficaGeneralSvg) {
+    throw new Error('La gráfica general interactiva no se renderizó.');
+  }
+
+  const categoriasTeclado = await cdp.evaluar(`document.querySelectorAll('.categorias-teclado button').length`);
+  if (categoriasTeclado < 4) {
+    throw new Error('El teclado científico no tiene las categorías requeridas.');
+  }
+
+  await cdp.evaluar(`document.querySelector('.btn-accion').click()`);
+  await esperar(200);
+  const metodoTrasBiseccion = await cdp.evaluar(`document.querySelector('.metodo-activo').textContent`);
+  if (!metodoTrasBiseccion.includes('Bisección')) {
+    throw new Error('El método activo no cambió a Bisección al transferir el intervalo.');
+  }
+  const aTransferido = await cdp.evaluar(`document.querySelector('[formcontrolname="extremoIzquierdo"]').value`);
+  const bTransferido = await cdp.evaluar(`document.querySelector('[formcontrolname="extremoDerecho"]').value`);
+  if (!aTransferido || !bTransferido) {
+    throw new Error('No se transfirieron los extremos a y b a Bisección.');
+  }
+  const raizAutoBiseccion = await cdp.evaluar(`Boolean(document.querySelector('.raiz > strong'))`);
+  if (raizAutoBiseccion) {
+    throw new Error('Bisección se resolvió automáticamente tras la transferencia.');
+  }
+  await cdp.evaluar(`document.querySelector('button[type="submit"]').click()`);
+  await esperar(200);
+  validarCercania(await esperarValor(cdp, '.raiz > strong'), 1.5213797068);
+
+  await cdp.evaluar(`[...document.querySelectorAll('.pestanas button')].find(b => b.textContent.includes('Análisis')).click()`);
+  await esperar(200);
+  await cdp.evaluar(`document.querySelector('.btn-accion-newton').click()`);
+  await esperar(200);
+  const metodoTrasNewton = await cdp.evaluar(`document.querySelector('.metodo-activo').textContent`);
+  if (!metodoTrasNewton.includes('Newton-Raphson')) {
+    throw new Error('El método activo no cambió a Newton-Raphson al transferir x₀.');
+  }
+  const x0Transferido = await cdp.evaluar(`document.querySelector('[formcontrolname="valorInicial"]').value`);
+  if (!x0Transferido) {
+    throw new Error('No se transfirió x₀ a Newton-Raphson.');
+  }
+  const raizAutoNewton = await cdp.evaluar(`Boolean(document.querySelector('.raiz > strong'))`);
+  if (raizAutoNewton) {
+    throw new Error('Newton-Raphson se resolvió automáticamente tras la transferencia.');
+  }
+  await cdp.evaluar(`document.querySelector('button[type="submit"]').click()`);
+  await esperar(200);
+  validarCercania(await esperarValor(cdp, '.raiz > strong'), 1.5213797068);
+
   await cdp.evaluar(`[...document.querySelectorAll('.pestanas button')].find(b => b.textContent.includes('Gráfica')).click()`);
   await esperar(200);
   const responsive = [];
@@ -249,3 +327,5 @@ ejecutar().catch(async (error) => {
   console.error(error);
   process.exit(1);
 });
+
+

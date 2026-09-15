@@ -88,6 +88,42 @@ Punto Fijo se detiene por:
 - Valor no finito si $g(x_n)$, $g'(x_n)$ o $f(x_n)$ caen fuera del dominio.
 - Posible divergencia ante crecimiento sostenido de errores, magnitudes extremas o ciclos oscilatorios persistentes.
 
+## Análisis científico de una función
+
+Para una expresión real validada se obtiene la cadena simbólica:
+
+$$f(x) \longrightarrow f'(x) \longrightarrow f''(x)$$
+
+Las dos derivaciones se realizan con el mismo motor de math.js. La segunda derivada se muestra como información científica y no se usa por sí sola para afirmar máximos, mínimos, convexidad o convergencia.
+
+La evaluación puntual calcula $f(x_0)$ con la expresión compilada y presenta además la sustitución de $x$ por $x_0$ en notación LaTeX.
+
+## Exploración por muestreo
+
+En un rango configurable $[x_{min},x_{max}]$ se construye una malla finita:
+
+$$x_i=x_{min}+i\frac{x_{max}-x_{min}}{N-1},\qquad i=0,\ldots,N-1$$
+
+Cada punto se clasifica como evaluable real finito o no evaluable. A partir de los puntos evaluables se informan el mínimo y máximo **observados** en esa malla; no se afirma que sean extremos absolutos de la función.
+
+## Intervalos candidatos
+
+Dos muestras consecutivas forman un intervalo candidato cuando:
+
+$$f(x_i)f(x_{i+1})<0$$
+
+El cambio de signo es evidencia compatible con el Teorema del Valor Intermedio únicamente si la función es continua en el intervalo. Por eso la aplicación no llama raíces a esos resultados y descarta cambios dominados por valores no finitos, magnitudes extremas o una evaluación anómala en el punto medio.
+
+La estimación visual del cruce usa interpolación lineal:
+
+$$x^*=a-f(a)\frac{b-a}{f(b)-f(a)}$$
+
+El valor $x^*$ no reemplaza la ejecución de Bisección. Las raíces de multiplicidad par pueden no cambiar de signo; los mínimos locales de $|f(x)|$ pequeños se muestran separadamente como zonas cercanas a cero.
+
+## Sugerencias para Newton-Raphson
+
+Los puntos medios o estimaciones de los intervalos candidatos pueden proponerse como $x_0$ cuando $f'(x_0)$ es real, finita y no cercana a cero. La sugerencia incluye su fundamento y no constituye una garantía de convergencia.
+
 # Modelo matemático — Método de Punto Fijo
 
 Para resolver una ecuación original:

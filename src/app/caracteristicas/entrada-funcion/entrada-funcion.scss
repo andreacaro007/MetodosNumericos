@@ -15,7 +15,12 @@ textarea:focus, input:focus { border-color: var(--lima); box-shadow: 0 0 0 3px #
 .vista-matematica > span { color: #8e9b95; text-transform: uppercase; letter-spacing: .1em; font-size: .58rem; }
 .vista-matematica app-visualizador-matematico { text-align: center; font-size: .95rem; }
 .sintaxis-error { color: #ffb7a8; font-size: .75rem; margin: .4rem 0 .1rem; }.vista-vacia { color: #7f8b85; font-size: .72rem; margin: .25rem 0; }
-.teclado { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .5rem; }
+.contenedor-teclado-cientifico { margin-top: .6rem; display: flex; flex-direction: column; gap: .4rem; }
+.categorias-teclado { display: flex; gap: .25rem; overflow-x: auto; padding-bottom: .2rem; }
+.categorias-teclado button { border: 1px solid #ffffff18; background: #ffffff08; color: #a0ada7; font-size: .65rem; font-weight: 600; border-radius: .25rem; padding: .2rem .45rem; cursor: pointer; white-space: nowrap; transition: all 120ms ease; }
+.categorias-teclado button:hover { color: #fff; border-color: #ffffff33; }
+.categorias-teclado button.activa { background: #ffffff1f; color: var(--lima); border-color: #d8ff3e66; }
+.teclado { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .2rem; }
 .teclado button { border: 1px solid #ffffff1c; color: #c8d0cc; background: transparent; border-radius: .25rem; font: 650 .7rem var(--fuente-mono); padding: .32rem .45rem; cursor: pointer; }
 .teclado button:hover { color: var(--lima); border-color: #d8ff3e80; }
 .metodos { display: grid; gap: .3rem; }
@@ -28,3 +33,4 @@ textarea:focus, input:focus { border-color: var(--lima); box-shadow: 0 0 0 3px #
 @media (max-height: 760px) and (min-width: 781px) { .panel-configuracion { gap: .65rem; padding: .85rem 1rem; }.vista-matematica { min-height: 3rem; }.teclado button { padding: .24rem .4rem; }.ejemplos button { padding-block: .25rem; }textarea { min-height: 3.1rem; } }
 @media (max-width: 780px) { .panel-configuracion { padding: 1rem; }.parametros { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 430px) { .parametros { grid-template-columns: 1fr; }.parametros .ancho { grid-column: auto; } }
+

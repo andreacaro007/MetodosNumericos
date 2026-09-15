@@ -1,6 +1,6 @@
 # Requisitos del producto
 
-## Alcance actual — GOAL-003
+## Alcance actual — GOAL-004
 
 - **RF-001:** ingresar una función real de una variable `x` con sintaxis científica amigable.
 - **RF-002:** visualizar la función mediante notación matemática.
@@ -20,6 +20,20 @@
 - **RF-016:** calcular analíticamente g'(x) mediante math.js y analizar la condición local |g'(x₀)| y |g'(xₙ)|.
 - **RF-017:** advertir si el punto fijo hallado para g(x) no anula suficientemente la ecuación original f(x)=0.
 - **RF-018:** generar diagrama de telaraña (Cobweb Plot) con curva g(x), recta identidad y sincronización de pasos.
+- **RF-019:** analizar una función en una capa independiente de los tres solucionadores.
+- **RF-020:** obtener y renderizar la primera y segunda derivada mediante derivación sucesiva con math.js.
+- **RF-021:** evaluar `f(x)` en un punto real y mostrar la sustitución matemática utilizada.
+- **RF-022:** clasificar la estructura de la expresión sin afirmar propiedades simbólicas no demostradas.
+- **RF-023:** informar restricciones observables asociadas a divisiones, logaritmos y radicales.
+- **RF-024:** explorar un intervalo configurable mediante un número acotado de muestras compilando la expresión una sola vez.
+- **RF-025:** informar valores evaluables, puntos no evaluables, mínimo observado y máximo observado dentro del intervalo explorado.
+- **RF-026:** detectar cambios de signo como intervalos candidatos para Bisección y filtrar discontinuidades aparentes mediante heurísticas conservadoras.
+- **RF-027:** mostrar separadamente zonas cercanas a cero que puedan corresponder a raíces pares, sin tratarlas como intervalos válidos de Bisección.
+- **RF-028:** proponer valores iniciales para Newton-Raphson e indicar el fundamento numérico de cada sugerencia.
+- **RF-029:** transferir `a`, `b` o `x₀` al formulario del método correspondiente sin ejecutar la resolución automáticamente.
+- **RF-030:** mostrar una gráfica general de `f(x)` antes de resolver, con zoom, desplazamiento y reinicio de vista.
+- **RF-031:** ofrecer un teclado científico organizado por categorías e insertar cada operación en la posición actual del cursor.
+- **RF-032:** permitir `Ctrl+Enter` para resolver y `Esc` para detener la reproducción sin interferir con la escritura normal.
 
 ## Requisitos no funcionales
 
@@ -27,8 +41,11 @@
 - Electron con `contextIsolation`, sin `nodeIntegration` ni contenido remoto.
 - math.js encapsulado; UI y documentación en español.
 - Una ejecución alimenta todas las vistas; máximo duro de 1000 iteraciones.
+- El muestreo científico se limita a entre 10 y 2000 puntos y reutiliza una expresión compilada.
 - Interfaz utilizable desde 390 px y sin backend, telemetría, CDN o red en ejecución.
+- Los resultados del explorador se describen siempre como observados, aproximados o candidatos.
+- No se incorporan IA, backend, persistencia, números complejos silenciosos ni librerías matemáticas adicionales.
 
-## Requisitos futuros (GOAL-004)
+## Alcance futuro — GOAL-005
 
-- Calculadora científica avanzada, análisis integral de funciones, asistencia para intervalos y mejoras analíticas tipo mini-WolframAlpha.
+- Comparación académica entre métodos, manual de usuario, exportaciones útiles y pulido general de UX.
