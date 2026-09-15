@@ -1,21 +1,27 @@
 <form class="panel-configuracion" [formGroup]="formulario" (ngSubmit)="enviar()">
   <div class="panel-cabecera">
     <span class="eyebrow">Configuración</span>
-    <span class="metodo-activo">{{ metodo() === 'BISECCION' ? '01 · Bisección' : '02 · Newton-Raphson' }}</span>
+    <span class="metodo-activo">{{ metodo() === 'BISECCION' ? '01 · Bisección' : metodo() === 'NEWTON_RAPHSON' ? '02 · Newton-Raphson' : '03 · Punto Fijo' }}</span>
   </div>
 
   <section class="entrada-matematica">
-    <label for="expresion">Función <span>f(x)</span></label>
-    <textarea #campoExpresion id="expresion" rows="2" formControlName="expresion" placeholder="Escribe f(x)" spellcheck="false" autocomplete="off"></textarea>
+    <label for="expresion">{{ metodo() === 'PUNTO_FIJO' ? 'Función original' : 'Función' }} <span>f(x)</span></label>
+    <textarea #campoExpresion id="expresion" rows="2" formControlName="expresion" placeholder="Escribe f(x)" spellcheck="false" autocomplete="off" (focus)="activarCampo('original')"></textarea>
+    @if (metodo() === 'PUNTO_FIJO') {
+      <label class="etiqueta-iteracion" for="expresionIteracion">Función de iteración <span>g(x)</span></label>
+      <textarea #campoIteracion id="expresionIteracion" rows="2" formControlName="expresionIteracion" placeholder="Escribe g(x)" spellcheck="false" autocomplete="off" (focus)="activarCampo('iteracion')"></textarea>
+      <p class="ayuda-punto-fijo" title="Ejemplo: x − cos(x) = 0 puede escribirse como x = cos(x), por tanto g(x) = cos(x).">Para aplicar Punto Fijo, transforma la ecuación f(x)=0 en una expresión equivalente x=g(x). <span>ⓘ</span></p>
+    }
     <div class="vista-matematica" aria-live="polite">
       <span>Vista matemática</span>
       @if (vista(); as formulas) {
-        <app-visualizador-matematico [latex]="'f(x)=' + formulas.funcion" [modoBloque]="true" />
-        @if (formulas.derivada) { <app-visualizador-matematico [latex]="&quot;f'(x)=&quot; + formulas.derivada" [modoBloque]="true" /> }
+        @if (formulas.funcion) { <app-visualizador-matematico [latex]="'f(x)=' + formulas.funcion" [modoBloque]="true" /> }
+        @if (formulas.iteracion) { <app-visualizador-matematico [latex]="'g(x)=' + formulas.iteracion" [modoBloque]="true" /> }
+        @if (formulas.derivada) { <app-visualizador-matematico [latex]="(metodo() === 'PUNTO_FIJO' ? &quot;g'(x)=&quot; : &quot;f'(x)=&quot;) + formulas.derivada" [modoBloque]="true" /> }
       } @else if (expresionActual().trim()) {
         <p class="sintaxis-error">La expresión aún no tiene una sintaxis válida.</p>
       } @else {
-        <p class="vista-vacia">La función aparecerá aquí.</p>
+        <p class="vista-vacia">{{ metodo() === 'PUNTO_FIJO' ? 'Las funciones y g\'(x) aparecerán aquí.' : 'La función aparecerá aquí.' }}</p>
       }
     </div>
     <div class="teclado" aria-label="Funciones rápidas">
@@ -28,7 +34,7 @@
   <section class="metodos" aria-label="Método numérico">
     <button type="button" class="metodo" [class.seleccionado]="metodo() === 'BISECCION'" (click)="seleccionar('BISECCION')"><span></span>Bisección <small>Disponible</small></button>
     <button type="button" class="metodo" [class.seleccionado]="metodo() === 'NEWTON_RAPHSON'" (click)="seleccionar('NEWTON_RAPHSON')"><span></span>Newton-Raphson <small>Disponible</small></button>
-    <button type="button" class="metodo" disabled><span></span>Punto Fijo <small>Próximamente</small></button>
+    <button type="button" class="metodo" [class.seleccionado]="metodo() === 'PUNTO_FIJO'" (click)="seleccionar('PUNTO_FIJO')"><span></span>Punto Fijo <small>Disponible</small></button>
   </section>
 
   <div class="parametros">
@@ -42,7 +48,7 @@
     <label class="ancho">Máximo de iteraciones <input type="number" formControlName="maximoIteraciones" /></label>
   </div>
 
-  <button class="resolver" type="submit"><span>Resolver con {{ metodo() === 'BISECCION' ? 'Bisección' : 'Newton' }}</span><b>→</b></button>
+  <button class="resolver" type="submit"><span>Resolver con {{ metodo() === 'BISECCION' ? 'Bisección' : metodo() === 'NEWTON_RAPHSON' ? 'Newton' : 'Punto Fijo' }}</span><b>→</b></button>
 
   <section class="ejemplos">
     <p>Ejemplos precargados</p>

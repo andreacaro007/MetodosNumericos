@@ -4,7 +4,28 @@
 
 Entrada: `f(x)`, extremos `a` y `b`, tolerancia positiva `ε` y entero `n_max` entre 1 y 1000. Salida: `ResultadoBiseccion` con estado, raíz, residuo, errores, razón de parada, tiempo y todas las iteraciones.
 
-## Precondiciones
+## Precondiciones de Punto Fijo
+
+Entrada: `f(x)`, `g(x)`, `x₀`, tolerancia `ε > 0`, `n_max ∈ [1, 1000]`.
+Precondiciones: sintaxis válida en ambas funciones, `x₀` evaluable en `g(x)`, `f(x)` y `g'(x)`.
+
+## Algoritmo propio de Punto Fijo
+
+```text
+xActual = x0
+Para n = 1 hasta maximoIteraciones:
+    siguienteX = g(xActual)
+    evaluar f(siguienteX)
+    evaluar g'(xActual) y moduloDerivadaG = |g'(xActual)|
+    calcular errores (absoluto, relativo, porcentual)
+    residuoPuntoFijo = |siguienteX - xActual|
+    residuoOriginal = |f(siguienteX)|
+    registrar iteración completa
+    verificar criterios de parada (tolerancia, divergencia, límites)
+    xActual = siguienteX
+```
+
+No se utiliza ningún solucionador externo para la iteración; math.js solo compila y evalúa las expresiones analizadas.
 
 - `a < b`, parámetros finitos y `ε > 0`.
 - expresión dentro de la lista controlada de símbolos, funciones y operadores.

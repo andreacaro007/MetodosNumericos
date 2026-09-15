@@ -7,6 +7,7 @@ label { display: block; font-size: .75rem; font-weight: 700; letter-spacing: .02
 label > span { color: var(--lima); font-family: var(--fuente-mono); }
 textarea, input { box-sizing: border-box; width: 100%; border: 1px solid #ffffff2b; background: #101715; color: white; border-radius: .35rem; font: 550 .92rem var(--fuente-mono); outline: none; transition: border-color 160ms, box-shadow 160ms; }
 textarea { margin-top: .45rem; padding: .75rem; resize: vertical; min-height: 3.8rem; font-size: 1rem; }
+.etiqueta-iteracion { margin-top: .65rem; }.ayuda-punto-fijo { margin: .5rem 0 0; color: #aeb9b3; font-size: .67rem; line-height: 1.45; }.ayuda-punto-fijo span { color: var(--lima); cursor: help; }
 input { padding: .62rem .7rem; margin-top: .32rem; }
 textarea::placeholder, input::placeholder { color: #718078; opacity: 1; }
 textarea:focus, input:focus { border-color: var(--lima); box-shadow: 0 0 0 3px #d8ff3e1c; }
@@ -24,6 +25,6 @@ textarea:focus, input:focus { border-color: var(--lima); box-shadow: 0 0 0 3px #
 .parametros { display: grid; grid-template-columns: 1fr 1fr; gap: .65rem; }.parametros .ancho { grid-column: 1 / -1; }
 .resolver { flex: 0 0 auto; border: 0; background: var(--lima); color: #101512; min-height: 3rem; padding: 0 1rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font: 800 .8rem var(--fuente); text-transform: uppercase; letter-spacing: .06em; transition: transform 150ms, background 150ms; }.resolver:hover { background: #e3ff76; transform: translateY(-1px); }.resolver b { font-size: 1.3rem; }
 .ejemplos { border-top: 1px solid #ffffff1b; padding-top: .7rem; display: grid; gap: .22rem; }.ejemplos > p { color: #8e9b95; text-transform: uppercase; letter-spacing: .12em; font-size: .58rem; margin: 0 0 .2rem; }.ejemplos button { border: 0; border-left: 2px solid #ffffff1a; background: transparent; color: white; display: grid; grid-template-columns: 1fr auto; gap: .1rem .5rem; text-align: left; padding: .35rem .55rem; cursor: pointer; }.ejemplos button:hover { border-left-color: var(--lima); background: #ffffff07; }.ejemplos span { grid-column: 1 / -1; color: #6f7c76; font-size: .56rem; text-transform: uppercase; letter-spacing: .08em; }.ejemplos strong { font: 650 .72rem var(--fuente-mono); }.ejemplos b { color: #98a39e; font: 550 .64rem var(--fuente-mono); }
-@media (max-height: 760px) and (min-width: 781px) { .panel-configuracion { gap: .65rem; padding: .85rem 1rem; }.vista-matematica { min-height: 3rem; }.teclado button { padding: .24rem .4rem; }.ejemplos button { padding-block: .25rem; } }
+@media (max-height: 760px) and (min-width: 781px) { .panel-configuracion { gap: .65rem; padding: .85rem 1rem; }.vista-matematica { min-height: 3rem; }.teclado button { padding: .24rem .4rem; }.ejemplos button { padding-block: .25rem; }textarea { min-height: 3.1rem; } }
 @media (max-width: 780px) { .panel-configuracion { padding: 1rem; }.parametros { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 430px) { .parametros { grid-template-columns: 1fr; }.parametros .ancho { grid-column: auto; } }

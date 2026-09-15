@@ -3,28 +3,34 @@ import { EntradaFuncion, type MetodoDisponible, type SolicitudResolucion } from 
 import { ResumenResultado } from '../../caracteristicas/resumen-resultado/resumen-resultado';
 import { TablaIteraciones } from '../../caracteristicas/tabla-iteraciones/tabla-iteraciones';
 import { TablaNewton } from '../../caracteristicas/tabla-newton/tabla-newton';
+import { TablaPuntoFijo } from '../../caracteristicas/tabla-punto-fijo/tabla-punto-fijo';
 import { PasoAPaso } from '../../caracteristicas/paso-a-paso/paso-a-paso';
 import { PasoAPasoNewton } from '../../caracteristicas/paso-a-paso-newton/paso-a-paso-newton';
+import { PasoAPasoPuntoFijo } from '../../caracteristicas/paso-a-paso-punto-fijo/paso-a-paso-punto-fijo';
 import { GraficaBiseccion } from '../../caracteristicas/grafica/grafica-biseccion';
 import { GraficaNewton } from '../../caracteristicas/grafica/grafica-newton';
+import { GraficaPuntoFijo } from '../../caracteristicas/grafica/grafica-punto-fijo';
 import { VisualizadorMatematico } from '../../compartido/visualizador-matematico';
 import { FormatearNumeroPipe } from '../../compartido/formatear-numero.pipe';
 import { CasoUsoResolverBiseccion } from '../../aplicacion/caso-uso-resolver-biseccion';
 import { CasoUsoResolverNewton } from '../../aplicacion/caso-uso-resolver-newton';
+import { CasoUsoResolverPuntoFijo } from '../../aplicacion/caso-uso-resolver-punto-fijo';
 import type { ResultadoBiseccion } from '../../core/metodos-numericos/biseccion/modelos-biseccion';
 import type { ResultadoNewton } from '../../core/metodos-numericos/newton/modelos-newton';
+import type { ResultadoPuntoFijo } from '../../core/metodos-numericos/punto-fijo/modelos-punto-fijo';
 
 type Pestana = 'resumen' | 'grafica' | 'iteraciones' | 'pasos' | 'analisis';
-type ResultadoAplicacion = ResultadoBiseccion | ResultadoNewton;
+type ResultadoAplicacion = ResultadoBiseccion | ResultadoNewton | ResultadoPuntoFijo;
 
 const CONFIGURACION_METODO: Record<MetodoDisponible, { titulo: string; descripcion: string; instruccion: string; simbolo: string }> = {
   BISECCION: { titulo: 'Método de Bisección', descripcion: 'Divide el intervalo y conserva la mitad que mantiene el cambio de signo.', instruccion: 'Ingresa una función y un intervalo para comenzar.', simbolo: '½' },
   NEWTON_RAPHSON: { titulo: 'Método de Newton-Raphson', descripcion: 'Sigue la tangente desde xₙ hasta su intersección con el eje X.', instruccion: 'Ingresa una función y un valor inicial x₀ para comenzar.', simbolo: "f'" },
+  PUNTO_FIJO: { titulo: 'Método de Punto Fijo', descripcion: 'Busca una solución mediante la iteración xₙ₊₁ = g(xₙ).', instruccion: 'Ingresa f(x), una transformación g(x) y un valor inicial x₀ para comenzar.', simbolo: '↗' },
 };
 
 @Component({
   selector: 'app-calculadora',
-  imports: [EntradaFuncion, ResumenResultado, TablaIteraciones, TablaNewton, PasoAPaso, PasoAPasoNewton, GraficaBiseccion, GraficaNewton, VisualizadorMatematico, FormatearNumeroPipe],
+  imports: [EntradaFuncion, ResumenResultado, TablaIteraciones, TablaNewton, TablaPuntoFijo, PasoAPaso, PasoAPasoNewton, PasoAPasoPuntoFijo, GraficaBiseccion, GraficaNewton, GraficaPuntoFijo, VisualizadorMatematico, FormatearNumeroPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './calculadora.html',
   styleUrl: './calculadora.scss',
@@ -32,11 +38,13 @@ const CONFIGURACION_METODO: Record<MetodoDisponible, { titulo: string; descripci
 export class Calculadora implements OnDestroy {
   private readonly casoBiseccion = new CasoUsoResolverBiseccion();
   private readonly casoNewton = new CasoUsoResolverNewton();
+  private readonly casoPuntoFijo = new CasoUsoResolverPuntoFijo();
   readonly metodo = signal<MetodoDisponible>('BISECCION');
   readonly configuracion = computed(() => CONFIGURACION_METODO[this.metodo()]);
   readonly resultado = signal<ResultadoAplicacion | undefined>(undefined);
   readonly resultadoBiseccion = computed<ResultadoBiseccion | undefined>(() => { const resultado = this.resultado(); return resultado?.metodo === 'BISECCION' ? resultado as ResultadoBiseccion : undefined; });
   readonly resultadoNewton = computed<ResultadoNewton | undefined>(() => { const resultado = this.resultado(); return resultado?.metodo === 'NEWTON_RAPHSON' ? resultado as ResultadoNewton : undefined; });
+  readonly resultadoPuntoFijo = computed<ResultadoPuntoFijo | undefined>(() => { const resultado = this.resultado(); return resultado?.metodo === 'PUNTO_FIJO' ? resultado as ResultadoPuntoFijo : undefined; });
   readonly error = signal<string | undefined>(undefined);
   readonly indiceActivo = signal(0);
   readonly pestana = signal<Pestana>('resumen');
@@ -44,6 +52,7 @@ export class Calculadora implements OnDestroy {
   private temporizador?: ReturnType<typeof setInterval>;
   readonly iteracionBiseccion = computed(() => this.resultadoBiseccion()?.iteraciones[this.indiceActivo()]);
   readonly iteracionNewton = computed(() => this.resultadoNewton()?.iteraciones[this.indiceActivo()]);
+  readonly iteracionPuntoFijo = computed(() => this.resultadoPuntoFijo()?.iteraciones[this.indiceActivo()]);
   readonly pestanas: readonly { id: Pestana; nombre: string }[] = [
     { id: 'resumen', nombre: 'Resumen' }, { id: 'grafica', nombre: 'Gráfica' }, { id: 'iteraciones', nombre: 'Iteraciones' }, { id: 'pasos', nombre: 'Paso a paso' }, { id: 'analisis', nombre: 'Análisis' },
   ];
@@ -51,11 +60,12 @@ export class Calculadora implements OnDestroy {
   resolver(solicitud: SolicitudResolucion): void {
     this.detener(); this.error.set(undefined); this.metodo.set(solicitud.metodo);
     try {
-      const resultado = solicitud.metodo === 'BISECCION' ? this.casoBiseccion.ejecutar(solicitud.parametros) : this.casoNewton.ejecutar(solicitud.parametros);
+      const resultado = this.ejecutarSolicitud(solicitud);
       this.resultado.set(resultado); this.indiceActivo.set(Math.max(0, resultado.iteraciones.length - 1)); this.pestana.set('resumen');
     } catch (error) {
       this.resultado.set(undefined);
-      this.error.set(solicitud.metodo === 'BISECCION' ? this.casoBiseccion.mensaje(error) : this.casoNewton.mensaje(error));
+      const mensajes = { BISECCION: this.casoBiseccion, NEWTON_RAPHSON: this.casoNewton, PUNTO_FIJO: this.casoPuntoFijo };
+      this.error.set(mensajes[solicitud.metodo].mensaje(error));
     }
   }
 
@@ -72,4 +82,12 @@ export class Calculadora implements OnDestroy {
   }
   detener(): void { if (this.temporizador) clearInterval(this.temporizador); this.temporizador = undefined; this.reproduciendo.set(false); }
   ngOnDestroy(): void { this.detener(); }
+
+  private ejecutarSolicitud(solicitud: SolicitudResolucion): ResultadoAplicacion {
+    switch (solicitud.metodo) {
+      case 'BISECCION': return this.casoBiseccion.ejecutar(solicitud.parametros);
+      case 'NEWTON_RAPHSON': return this.casoNewton.ejecutar(solicitud.parametros);
+      case 'PUNTO_FIJO': return this.casoPuntoFijo.ejecutar(solicitud.parametros);
+    }
+  }
 }

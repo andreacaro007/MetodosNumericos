@@ -6,9 +6,10 @@
       <div><span class="eyebrow">Análisis</span><h1>{{ configuracion().titulo }}</h1><p>{{ configuracion().descripcion }}</p></div>
       @if (resultadoBiseccion(); as solucion) { <div class="formula-activa"><span>Función activa</span><app-visualizador-matematico [latex]="'f(x)=' + solucion.expresionLatex" /></div> }
       @if (resultadoNewton(); as solucion) { <div class="formula-activa formulas-newton"><span>Función y derivada</span><app-visualizador-matematico [latex]="'f(x)=' + solucion.expresionLatex" /><app-visualizador-matematico [latex]="&quot;f'(x)=&quot; + solucion.derivadaLatex" /></div> }
+      @if (resultadoPuntoFijo(); as solucion) { <div class="formula-activa formulas-newton"><span>Funciones y derivada</span><app-visualizador-matematico [latex]="'f(x)=' + solucion.expresionLatex" /><app-visualizador-matematico [latex]="'g(x)=' + solucion.expresionIteracionLatex" /><app-visualizador-matematico [latex]="&quot;g'(x)=&quot; + solucion.derivadaIteracionLatex" /></div> }
     </header>
 
-    @if (error(); as mensaje) { <section class="mensaje-error"><span>!</span><div><strong>No se puede aplicar {{ metodo() === 'BISECCION' ? 'Bisección' : 'Newton-Raphson' }}</strong><p>{{ mensaje }}</p></div></section> }
+    @if (error(); as mensaje) { <section class="mensaje-error"><span>!</span><div><strong>No se puede aplicar {{ configuracion().titulo }}</strong><p>{{ mensaje }}</p></div></section> }
 
     @if (resultado(); as solucion) {
       @if (solucion.iteraciones.length > 0) {
@@ -19,6 +20,7 @@
           <div><strong>Iteración {{ indiceActivo() + 1 }} de {{ solucion.cantidadIteraciones }}</strong>
             @if (iteracionBiseccion(); as iteracion) { <span>Intervalo [{{ iteracion.extremoIzquierdo | numero:7 }}, {{ iteracion.extremoDerecho | numero:7 }}]</span> }
             @if (iteracionNewton(); as iteracion) { <span>xₙ = {{ iteracion.xActual | numero:10 }} · xₙ₊₁ = {{ iteracion.siguienteX | numero:10 }}</span> }
+            @if (iteracionPuntoFijo(); as iteracion) { <span>xₙ = {{ iteracion.xActual | numero:10 }} · g(xₙ) = {{ iteracion.siguienteX | numero:10 }} · |g'(xₙ)| = {{ iteracion.moduloDerivadaG | numero:7 }}</span> }
           </div>
         </section>
       }
@@ -29,20 +31,24 @@
           @case ('grafica') {
             @if (resultadoBiseccion(); as biseccion) { @if (iteracionBiseccion(); as iteracion) { <app-grafica-biseccion [expresion]="biseccion.expresionNormalizada" [iteracion]="iteracion" [raiz]="biseccion.raiz" /> } @else { <p class="sin-iteraciones">La raíz se encontró en un extremo; no fue necesario iterar.</p> } }
             @if (resultadoNewton(); as newton) { @if (iteracionNewton(); as iteracion) { <app-grafica-newton [expresion]="newton.expresionNormalizada" [iteracion]="iteracion" [raiz]="newton.raiz" /> } }
+            @if (resultadoPuntoFijo(); as puntoFijo) { <app-grafica-punto-fijo [expresionIteracion]="puntoFijo.expresionIteracionNormalizada" [iteraciones]="puntoFijo.iteraciones" [indiceActivo]="indiceActivo()" [raiz]="puntoFijo.raiz" /> }
           }
           @case ('iteraciones') {
             @if (resultadoBiseccion(); as biseccion) { <app-tabla-iteraciones [iteraciones]="biseccion.iteraciones" [indiceActivo]="indiceActivo()" (seleccionar)="indiceActivo.set($event)" /> }
             @if (resultadoNewton(); as newton) { <app-tabla-newton [iteraciones]="newton.iteraciones" [indiceActivo]="indiceActivo()" (seleccionar)="indiceActivo.set($event)" /> }
+            @if (resultadoPuntoFijo(); as puntoFijo) { <app-tabla-punto-fijo [iteraciones]="puntoFijo.iteraciones" [indiceActivo]="indiceActivo()" (seleccionar)="indiceActivo.set($event)" /> }
           }
           @case ('pasos') {
             @if (resultadoBiseccion(); as biseccion) { @if (iteracionBiseccion(); as iteracion) { <app-paso-a-paso [iteracion]="iteracion" [expresionLatex]="biseccion.expresionLatex" /> } @else { <p class="sin-iteraciones">La función ya era cero en un extremo del intervalo.</p> } }
             @if (resultadoNewton(); as newton) { @if (iteracionNewton(); as iteracion) { <app-paso-a-paso-newton [iteracion]="iteracion" [expresionLatex]="newton.expresionLatex" [derivadaLatex]="newton.derivadaLatex" [expresionNormalizada]="newton.expresionNormalizada" [derivadaNormalizada]="newton.derivadaNormalizada" /> } }
+            @if (resultadoPuntoFijo(); as puntoFijo) { @if (iteracionPuntoFijo(); as iteracion) { <app-paso-a-paso-punto-fijo [iteracion]="iteracion" [expresionOriginalLatex]="puntoFijo.expresionLatex" [expresionIteracionLatex]="puntoFijo.expresionIteracionLatex" [derivadaIteracionLatex]="puntoFijo.derivadaIteracionLatex" [expresionOriginalNormalizada]="puntoFijo.expresionNormalizada" [expresionIteracionNormalizada]="puntoFijo.expresionIteracionNormalizada" /> } }
           }
           @case ('analisis') {
             <section class="analisis-previo"><h2>Diagnóstico del método</h2>
               <div><span>Función válida</span><strong>✓</strong></div>
               @if (resultadoBiseccion()) { <div><span>f(a) evaluable</span><strong>✓</strong></div><div><span>f(b) evaluable</span><strong>✓</strong></div><div><span>Cambio de signo inicial</span><strong>✓</strong></div><div><span>Método aplicable</span><strong>✓</strong></div><p>La Bisección presupone continuidad en el intervalo. Se verifica evaluabilidad y cambio de signo.</p> }
               @if (resultadoNewton(); as newton) { <div><span>Derivada obtenida</span><strong>✓</strong></div><div><span>x₀ evaluable</span><strong>✓</strong></div><div><span>f'(x₀) evaluada</span><strong>{{ newton.estado === 'DERIVADA_CERO' ? '!' : '✓' }}</strong></div><div><span>Método inicializable</span><strong>✓</strong></div><p>La derivada se obtiene simbólicamente con math.js. Umbral de derivada casi cero: {{ newton.umbralDerivada | numero:8 }}.</p> }
+              @if (resultadoPuntoFijo(); as puntoFijo) { <div><span>Función f(x) válida</span><strong>✓</strong></div><div><span>Función g(x) válida</span><strong>✓</strong></div><div><span>g'(x) obtenida</span><strong>✓</strong></div><div><span>x₀ evaluable</span><strong>✓</strong></div><div><span>|g'(x₀)| &lt; 1</span><strong>{{ puntoFijo.moduloDerivadaInicial < 1 ? '✓' : '⚠' }}</strong></div><div><span>Iteración inicializable</span><strong>✓</strong></div><p>|g'(x₀)| = {{ puntoFijo.moduloDerivadaInicial | numero:9 }}. Máximo |g'(xₙ)| observado = {{ puntoFijo.maximoModuloDerivada | numero:9 }}. Residuo final de f(x) = {{ puntoFijo.residuoFinal | numero:9 }}.</p><p>{{ puntoFijo.moduloDerivadaInicial < 1 ? 'La condición local es favorable, pero no constituye una garantía global.' : 'La condición local es desfavorable; la iteración puede divergir o alejarse del punto fijo.' }}</p> }
             </section>
           }
         }

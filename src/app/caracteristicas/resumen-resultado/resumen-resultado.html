@@ -3,6 +3,7 @@
     <span>Raíz aproximada</span>
     <strong>{{ resultado().raiz | numero:12 }}</strong>
     <p [class.advertencia]="esAdvertencia()"><i>{{ esAdvertencia() ? '!' : '✓' }}</i>{{ resultado().descripcionParada }}</p>
+    @for (advertencia of resultado().advertencias; track advertencia) { <p class="advertencia"><i>!</i>{{ advertencia }}</p> }
   </div>
   <div class="metricas">
     <article><span>Iteraciones</span><strong>{{ resultado().cantidadIteraciones }}</strong></article>
@@ -10,6 +11,9 @@
     <article><span>Residuo |f(x)|</span><strong>{{ resultado().residuoFinal | numero:8 }}</strong></article>
     @if (resultadoBiseccion(); as biseccion) {
       <article><span>Intervalo final</span><strong class="intervalo">[@if (biseccion.iteraciones.at(-1); as ultima) {{{ ultima.nuevoExtremoIzquierdo | numero:7 }}, {{ ultima.nuevoExtremoDerecho | numero:7 }}} @else {raíz en extremo}]</strong></article>
+    } @else if (resultadoPuntoFijo(); as puntoFijo) {
+      <article><span>Residuo |g(x)−x|</span><strong>{{ puntoFijo.residuoPuntoFijoFinal | numero:8 }}</strong></article>
+      <article><span>|g'(x*)|</span><strong>{{ puntoFijo.moduloDerivadaFinal | numero:8 }}</strong></article>
     } @else {
       <article><span>Error relativo final</span><strong>{{ resultado().errorRelativoFinal | numero:8 }}</strong></article>
     }

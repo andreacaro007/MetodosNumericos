@@ -114,6 +114,61 @@ async function ejecutar() {
   await esperar(500);
   const tangente = await cdp.evaluar(`document.querySelector('.jxgbox').textContent.includes('xₙ₊₁')`);
 
+  await cdp.evaluar(`[...document.querySelectorAll('.metodo')].find(b => b.textContent.includes('Punto Fijo')).click()`);
+  const estadoInicialPuntoFijo = await cdp.evaluar(`({
+    f: document.querySelector('#expresion').value,
+    g: document.querySelector('#expresionIteracion').value,
+    x0: document.querySelector('[formcontrolname="valorInicial"]').value
+  })`);
+  if (estadoInicialPuntoFijo.f || estadoInicialPuntoFijo.g || estadoInicialPuntoFijo.x0) {
+    throw new Error('Punto Fijo no inicia vacío en f(x), g(x) y x₀: ' + JSON.stringify(estadoInicialPuntoFijo));
+  }
+
+  await cdp.evaluar(`document.querySelectorAll('.ejemplos button')[0].click(); document.querySelector('button[type="submit"]').click()`);
+  await esperar(150);
+  const pfTrigonometrica = await esperarValor(cdp, '.raiz > strong');
+  validarCercania(pfTrigonometrica, 0.7390851332);
+
+  await cdp.evaluar(`document.querySelectorAll('.ejemplos button')[1].click(); document.querySelector('button[type="submit"]').click()`);
+  await esperar(150);
+  const pfExponencial = await esperarValor(cdp, '.raiz > strong');
+  validarCercania(pfExponencial, 0.5671432904);
+
+  await cdp.evaluar(`document.querySelectorAll('.ejemplos button')[2].click(); document.querySelector('button[type="submit"]').click()`);
+  await esperar(150);
+  const pfPolinomica = await esperarValor(cdp, '.raiz > strong');
+  validarCercania(pfPolinomica, 1.5213797068);
+
+  const formulasPuntoFijo = await cdp.evaluar(`document.querySelectorAll('.formulas-newton .katex').length`);
+  if (formulasPuntoFijo < 3) throw new Error('No se muestran f(x), g(x) y g\'(x) con KaTeX.');
+
+  await cdp.evaluar(`[...document.querySelectorAll('.pestanas button')].find(b => b.textContent.includes('Gráfica')).click()`);
+  await esperar(500);
+  const graficaCobweb = await cdp.evaluar(`document.querySelector('.grafica-toolbar')?.textContent?.includes('Cobweb') && Boolean(document.querySelector('.jxgbox svg'))`);
+
+  await cdp.evaluar(`[...document.querySelectorAll('.pestanas button')].find(b => b.textContent.includes('Iteraciones')).click()`);
+  await esperarValor(cdp, 'tbody tr');
+  const encabezadosTabla = await cdp.evaluar(`[...document.querySelectorAll('th')].map(t => t.textContent.trim()).join(' | ')`);
+  if (!encabezadosTabla.includes("g'(xₙ)") || !encabezadosTabla.includes('|g(xₙ)−xₙ|') || !encabezadosTabla.includes('|f(xₙ₊₁)|')) {
+    throw new Error('La tabla de Punto Fijo no contiene las columnas requeridas: ' + encabezadosTabla);
+  }
+
+  await cdp.evaluar(`document.querySelectorAll('tbody tr')[1].click()`);
+  await cdp.evaluar(`[...document.querySelectorAll('.pestanas button')].find(b => b.textContent.includes('Paso a paso')).click()`);
+  const pasoPuntoFijo = await esperarValor(cdp, '.procedimiento header strong');
+  const contenidoPasos = await cdp.evaluar(`document.querySelector('.procedimiento')?.textContent`);
+  if (!contenidoPasos.includes("g'(x)") || !contenidoPasos.includes('Punto Fijo')) {
+    throw new Error('El paso a paso de Punto Fijo no muestra la derivada o la fórmula de iteración.');
+  }
+
+  await cdp.evaluar(`[...document.querySelectorAll('.pestanas button')].find(b => b.textContent.includes('Análisis')).click()`);
+  const analisisPuntoFijo = await esperarValor(cdp, '.analisis-previo');
+  if (!analisisPuntoFijo.includes("g'(x) obtenida") || !analisisPuntoFijo.includes('|g\'(x₀)|')) {
+    throw new Error('La pestaña Análisis no contiene las validaciones de Punto Fijo.');
+  }
+
+  await cdp.evaluar(`[...document.querySelectorAll('.pestanas button')].find(b => b.textContent.includes('Gráfica')).click()`);
+  await esperar(200);
   const responsive = [];
   for (const [width, height] of [[1366, 768], [1280, 720], [1024, 768], [860, 640], [390, 700]]) {
     await cdp.evaluar(`window.resizeTo(${width}, ${height})`);
@@ -123,7 +178,10 @@ async function ejecutar() {
 
   await cliente.Network.enable();
   await cliente.Network.emulateNetworkConditions({ offline: true, latency: 0, downloadThroughput: 0, uploadThroughput: 0 });
-  await cdp.evaluar(`[...document.querySelectorAll('.pestanas button')].find(b => b.textContent.includes('Resumen')).click(); document.querySelectorAll('.ejemplos button')[0].click(); document.querySelector('button[type="submit"]').click()`);
+  await cdp.evaluar(`[...document.querySelectorAll('.metodo')].find(b => b.textContent.includes('Newton-Raphson')).click()`);
+  await cdp.evaluar(`document.querySelectorAll('.ejemplos button')[0].click(); document.querySelector('button[type="submit"]').click()`);
+  await esperar(150);
+  await cdp.evaluar(`[...document.querySelectorAll('.pestanas button')].find(b => b.textContent.includes('Resumen'))?.click()`);
   await esperar(150);
   validarCercania(await esperarValor(cdp, '.raiz > strong'), 1.5213797068);
   const establecer = (selector, valor) => cdp.evaluar(`(() => { const elemento = document.querySelector(${JSON.stringify(selector)}); elemento.value = ${JSON.stringify(valor)}; elemento.dispatchEvent(new Event('input', { bubbles: true })); })()`);
@@ -142,6 +200,18 @@ async function ejecutar() {
   await esperar(120);
   const maximoIteraciones = await cdp.evaluar(`Boolean(document.querySelector('.raiz p')?.textContent.includes('máximo de iteraciones'))`);
 
+  await cdp.evaluar(`[...document.querySelectorAll('.metodo')].find(b => b.textContent.includes('Punto Fijo')).click()`);
+  await cdp.evaluar(`[...document.querySelectorAll('.pestanas button')].find(b => b.textContent.includes('Resumen'))?.click()`);
+  await establecer('#expresion', 'x - 2');
+  await establecer('#expresionIteracion', '0.5*x');
+  await establecer('[formcontrolname="valorInicial"]', '1');
+  await cdp.evaluar(`document.querySelector('button[type="submit"]').click()`);
+  await esperar(150);
+  const advertenciaTransformacion = await cdp.evaluar(`document.body.textContent.includes('Revisa la transformación utilizada para g(x)')`);
+  if (!advertenciaTransformacion) {
+    throw new Error('No se mostró la advertencia de transformación inconsistente con f(x)=0.');
+  }
+
   if (!grafica || !derivada || !tangente || !derivadaCero || !entradaInvalida || !maximoIteraciones || responsive.some((vista) => !vista.sinScrollHorizontal || !vista.graficaVisible || !vista.resolverDisponible) || paso !== 'Iteración 1' || cantidadPasos < 7 || cdp.errores.length) {
     throw new Error(`Fallo de interfaz: ${JSON.stringify({ grafica, derivada, tangente, derivadaCero, entradaInvalida, maximoIteraciones, responsive, paso, cantidadPasos, errores: cdp.errores })}`);
   }
@@ -149,12 +219,17 @@ async function ejecutar() {
   console.log(JSON.stringify({
     ejecutable,
     seguridad,
-    resultados: { biseccion: { polinomica, trigonometrica, exponencial }, newton: { polinomica: newtonPolinomica, trigonometrica: newtonTrigonometrica, exponencial: newtonExponencial } },
+    resultados: {
+      biseccion: { polinomica, trigonometrica, exponencial },
+      newton: { polinomica: newtonPolinomica, trigonometrica: newtonTrigonometrica, exponencial: newtonExponencial },
+      puntoFijo: { trigonometrica: pfTrigonometrica, exponencial: pfExponencial, polinomica: pfPolinomica }
+    },
     grafica,
+    graficaCobweb,
     derivada,
     tangente,
     pruebaOffline: true,
-    casosControlados: { derivadaCero, entradaInvalida, maximoIteraciones },
+    casosControlados: { derivadaCero, entradaInvalida, maximoIteraciones, advertenciaTransformacion },
     responsive,
     sincronizacion: paso,
     cantidadPasos,

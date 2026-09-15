@@ -22,10 +22,31 @@ La entrada se convierte en `ExpresionAnalizada`, que conserva texto original, no
 
 ## Arquitectura multi-método
 
-    Calculadora → método seleccionado → CasoUsoResolverBiseccion → SolucionadorBiseccion
-                                  └──→ CasoUsoResolverNewton    → SolucionadorNewton
-                                                            ↓
-                             Analizador / Derivador / Evaluador → math.js
+```text
+                         Calculadora
+                             │
+                  Método seleccionado
+               /             |              \
+              ▼              ▼               ▼
+       Bisección          Newton         Punto Fijo
+              │              │               │
+              ▼              ▼               ▼
+    Solucionador       Solucionador     Solucionador
+     Bisección           Newton          PuntoFijo
+              \              |              /
+               └─────────────┼─────────────┘
+                             ▼
+                      Motor matemático
+                             │
+                           math.js
+```
+
+Punto Fijo cuenta con:
+- `SolucionadorPuntoFijo` en `core/metodos-numericos/punto-fijo/`.
+- `ValidadorPuntoFijo` para rangos y tipos numéricos.
+- `ConstructorPasosPuntoFijo` para reconstrucción determinista sin IA.
+- `CasoUsoResolverPuntoFijo` como puerto de aplicación.
+- Componentes visuales especializados: `TablaPuntoFijo`, `PasoAPasoPuntoFijo` y `GraficaPuntoFijo` (Cobweb Plot interactivo con curva $y=g(x)$ y recta identidad $y=x$).
 
 El formulario comparte función, tolerancia y máximo de iteraciones; habilita intervalo para Bisección o x₀ para Newton. Cambiar de método limpia resultado, error, reproducción e iteración activa. Las tablas y gráficas son específicas, mientras navegación, resumen y visualización KaTeX se reutilizan.
 
