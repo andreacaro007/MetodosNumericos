@@ -21,8 +21,10 @@ La aplicación apoya el análisis del estudiante, pero no reemplaza la verificac
 
 1. Ubica **MetodosNumericos.exe** en la carpeta donde fue descargado o copiado.
 2. Haz doble clic en el archivo.
-3. Si Windows muestra una advertencia de protección para un ejecutable sin firma comercial, revisa que el archivo provenga del proyecto y utiliza la opción de ejecución que ofrece el sistema.
-4. Espera a que aparezca la ventana **Métodos Numéricos**.
+3. Si aparece el aviso **Windows protegió su PC**, comprueba primero que el archivo sea el ejecutable recibido desde este proyecto y que confíes en su origen.
+4. En el aviso, pulsa **Más información**. Windows mostrará el nombre de la aplicación y habilitará el botón **Ejecutar de todas formas**.
+5. Pulsa **Ejecutar de todas formas** únicamente si verificaste el origen del archivo. Este aviso puede aparecer porque el ejecutable académico no tiene una firma digital comercial; no significa por sí solo que el archivo contenga un problema.
+6. Espera a que aparezca la ventana **Métodos Numéricos**.
 
 El ejecutable es portable: no requiere instalación, Node.js ni permisos de administrador. Puede copiarse a otra carpeta o memoria USB. Los reportes exportados se guardan en la ubicación que gestione el navegador interno de Electron, normalmente **Descargas**.
 

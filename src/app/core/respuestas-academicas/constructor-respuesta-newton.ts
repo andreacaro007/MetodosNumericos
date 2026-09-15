@@ -6,10 +6,16 @@ export class ConstructorRespuestaNewton {
     const primera = resultado.iteraciones[0];
     let interpretacion = 'No hay una iteración inicial disponible para evaluar las condiciones de inicio.';
     if (primera) {
-      if (resultado.estado === 'DERIVADA_CERO') {
+      const derivadaInicialCero = primera.valorDerivada === 0;
+      const derivadaInicialCasiCero = !derivadaInicialCero && Math.abs(primera.valorDerivada) < resultado.umbralDerivada;
+      if (derivadaInicialCero) {
         interpretacion = 'f\'(x₀) es cero; Newton-Raphson no puede construir el siguiente paso y se detuvo.';
-      } else if (resultado.estado === 'DERIVADA_CASI_CERO') {
+      } else if (derivadaInicialCasiCero) {
         interpretacion = 'f\'(x₀) es demasiado cercana a cero según el umbral del solucionador; continuar sería numéricamente inestable.';
+      } else if (resultado.razonParada === 'DERIVADA_CERO') {
+        interpretacion = 'f\'(x₀) es distinta de cero y Newton-Raphson pudo inicializarse correctamente, pero se detuvo posteriormente porque la derivada fue cero en una aproximación posterior.';
+      } else if (resultado.razonParada === 'DERIVADA_CASI_CERO') {
+        interpretacion = 'f\'(x₀) es distinta de cero y Newton-Raphson pudo inicializarse correctamente, pero se detuvo posteriormente porque la derivada fue casi cero en una aproximación posterior.';
       } else {
         interpretacion = 'f\'(x₀) es distinta de cero y Newton-Raphson puede inicializarse. Esto no constituye una garantía general de convergencia.';
       }

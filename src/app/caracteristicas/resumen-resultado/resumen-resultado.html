@@ -21,7 +21,7 @@
 </section>
 
 @if (respuestaAcademica(); as respuesta) {
-  <section class= respuesta-academica>
+  <section class='respuesta-academica'>
     <header>
       <span>Desarrollo determinista</span>
       <h2>Respuesta académica</h2>
@@ -29,32 +29,32 @@
 
     @switch (respuesta.metodo) {
       @case ('BISECCION') {
-        <div class=bloque-academico>
+        <div class='bloque-academico'>
           <h3>Aplicabilidad del método</h3>
-          <div class=datos-en-linea>
+          <div class='datos-en-linea'>
             <span>f(a) = <strong>{{ respuesta.valorA | numero:10 }}</strong></span>
             <span>f(b) = <strong>{{ respuesta.valorB | numero:10 }}</strong></span>
             <span>f(a) · f(b) = <strong>{{ respuesta.productoExtremos | numero:10 }}</strong></span>
           </div>
           <p>{{ respuesta.aplicabilidad }}</p>
-          <p class=nota>{{ respuesta.advertenciaContinuidad }}</p>
+          <p class='nota'>{{ respuesta.advertenciaContinuidad }}</p>
         </div>
 
         @if (respuesta.cotaIteraciones; as cota) {
-          <div class=bloque-academico cota-teorica>
+          <div class='bloque-academico cota-teorica'>
             <h3>Cota teórica de iteraciones</h3>
-            <p class=formula>{{ cota.formula }}</p>
+            <p class='formula'>{{ cota.formula }}</p>
             <p>Sustitución: <strong>{{ cota.sustitucion }}</strong></p>
             <p>Resultado intermedio: N = ceil({{ cota.valorLogaritmo | numero:6 }})</p>
-            <p class=resultado-cota>N = {{ cota.iteraciones }}</p>
-            <p class=nota>La cota teórica asociada a la reducción del intervalo es N = {{ cota.iteraciones }}. En esta ejecución el método realizó {{ respuesta.resultado.cantidadIteraciones }} iteraciones y pudo detenerse por otro criterio.</p>
+            <p class='resultado-cota'>N = {{ cota.iteraciones }}</p>
+            <p class='nota'>La cota teórica asociada a la reducción del intervalo es N = {{ cota.iteraciones }}. En esta ejecución el método realizó {{ respuesta.resultado.cantidadIteraciones }} iteraciones y pudo detenerse por otro criterio.</p>
           </div>
         }
 
-        <div class=bloque-academico primeras-iteraciones>
+        <div class='bloque-academico primeras-iteraciones'>
           <h3>Primeras 4 iteraciones</h3>
           @if (respuesta.primerasIteraciones.length > 0) {
-            <div class=tabla-contenedor>
+            <div class='tabla-contenedor'>
               <table>
                 <thead><tr><th>n</th><th>a</th><th>b</th><th>xₘ</th><th>f(xₘ)</th><th>Nuevo intervalo</th></tr></thead>
                 <tbody>
@@ -72,13 +72,13 @@
               </table>
             </div>
           }
-          @if (respuesta.notaPrimerasIteraciones) { <p class=nota>{{ respuesta.notaPrimerasIteraciones }}</p> }
+          @if (respuesta.notaPrimerasIteraciones) { <p class='nota'>{{ respuesta.notaPrimerasIteraciones }}</p> }
         </div>
       }
       @case ('NEWTON_RAPHSON') {
-        <div class=bloque-academico>
+        <div class='bloque-academico'>
           <h3>Condiciones iniciales</h3>
-          <div class=datos-en-linea>
+          <div class='datos-en-linea'>
             <span>x₀ = <strong>{{ respuesta.valorInicial | numero:10 }}</strong></span>
             <span>f(x₀) = <strong>{{ respuesta.valorFuncionInicial | numero:10 }}</strong></span>
             <span>f'(x₀) = <strong>{{ respuesta.valorDerivadaInicial | numero:10 }}</strong></span>
@@ -87,9 +87,9 @@
         </div>
       }
       @case ('PUNTO_FIJO') {
-        <div class=bloque-academico>
+        <div class='bloque-academico'>
           <h3>Condiciones iniciales</h3>
-          <div class=datos-en-linea>
+          <div class='datos-en-linea'>
             <span>f(x) = <strong>{{ respuesta.expresionOriginal }}</strong></span>
             <span>g(x) = <strong>{{ respuesta.expresionIteracion }}</strong></span>
             <span>x₀ = <strong>{{ respuesta.valorInicial | numero:10 }}</strong></span>
@@ -98,16 +98,16 @@
           </div>
           <p>{{ respuesta.interpretacion }}</p>
         </div>
-        <div class=bloque-academico residuos-punto-fijo>
+        <div class='bloque-academico residuos-punto-fijo'>
           <div><h3>Residuo de Punto Fijo</h3><strong>|g(x*) − x*| = {{ respuesta.residuoPuntoFijo | numero:10 }}</strong></div>
           <div><h3>Residuo de la ecuación original</h3><strong>|f(x*)| = {{ respuesta.residuoOriginal | numero:10 }}</strong></div>
         </div>
       }
     }
 
-    <div class=bloque-academico conclusion-academica>
+    <div class='bloque-academico conclusion-academica'>
       <h3>Resultado</h3>
-      <div class=datos-en-linea>
+      <div class='datos-en-linea'>
         <span>Raíz aproximada: <strong>{{ respuesta.resultado.raiz | numero:12 }}</strong></span>
         <span>Iteraciones realizadas: <strong>{{ respuesta.resultado.cantidadIteraciones }}</strong></span>
         <span>Error final: <strong>{{ respuesta.resultado.errorFinal | numero:10 }}</strong></span>

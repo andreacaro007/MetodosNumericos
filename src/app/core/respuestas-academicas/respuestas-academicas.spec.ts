@@ -49,6 +49,18 @@ describe('Respuestas académicas', () => {
     expect(respuesta.resultado.estado).toBe(resultado.estado);
   });
 
+  it('distingue una derivada inicial válida de una derivada cero posterior', () => {
+    const resultado = new CasoUsoResolverNewton().ejecutar({
+      expresion: 'x^2+1', valorInicial: 1, tolerancia: 1e-7, maximoIteraciones: 100,
+    });
+    const respuesta = new ConstructorRespuestaNewton().construir(resultado);
+    expect(respuesta.valorDerivadaInicial).toBe(2);
+    expect(resultado.razonParada).toBe('DERIVADA_CERO');
+    expect(respuesta.interpretacion).toMatch(/pudo inicializarse correctamente/i);
+    expect(respuesta.interpretacion).toMatch(/posteriormente.*derivada fue cero/i);
+    expect(respuesta.interpretacion).not.toMatch(/f'\(x₀\) es cero/i);
+  });
+
   it('diferencia los dos residuos de Punto Fijo', () => {
     const resultado = new CasoUsoResolverPuntoFijo().ejecutar({
       expresionOriginal: 'cos(x)-x', expresionIteracion: 'cos(x)', valorInicial: 0.5, tolerancia: 1e-7, maximoIteraciones: 100,
